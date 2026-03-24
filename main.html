@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lightspeed Call Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Rich dark palette */
+  --bg:#060a14;
+  --card:#0d1321;
+  --card2:#111a2e;
+  --sidebar-bg:#080d1a;
+  --topbar-bg:#080d1aee;
+  --border:rgba(99,130,255,0.10);
+  --border2:rgba(99,130,255,0.22);
+  /* Vivid accent system */
+  --blue:#5b8def;
+  --blue2:#7eb3ff;
+  --cyan:#22d3ee;
+  --green:#10e8a0;
+  --amber:#f59e0b;
+  --orange:#f97316;
+  --red:#f46f6f;
+  --purple:#a78bfa;
+  --pink:#ec4899;
+  /* Text */
+  --text:#dde6f5;
+  --muted:#6b7fa3;
+  --sidebar-w:248px;
+  /* Surfaces */
+  --surface-hover:rgba(99,130,255,0.07);
+  --surface-hover2:rgba(99,130,255,0.04);
+  --bar-bg:rgba(99,130,255,0.10);
+  --input-bg:#0d1321;
+  --turns-bg:rgba(0,5,20,0.35);
+  --shadow:0 8px 32px rgba(0,0,0,0.55),0 2px 8px rgba(0,0,0,0.3);
+  --shadow-card:0 2px 12px rgba(0,0,0,0.4);
+  --glow-blue:0 0 20px rgba(91,141,239,0.3);
+  --glow-green:0 0 20px rgba(16,232,160,0.25);
+  --glow-red:0 0 16px rgba(244,111,111,0.25);
+  --glow-purple:0 0 16px rgba(167,139,250,0.25);
+  /* Gradients */
+  --grad-blue:linear-gradient(135deg,#3b7ef8,#6366f1);
+  --grad-green:linear-gradient(135deg,#10e8a0,#06b6d4);
+  --grad-amber:linear-gradient(135deg,#f59e0b,#f97316);
+  --grad-red:linear-gradient(135deg,#f46f6f,#ec4899);
+  --grad-purple:linear-gradient(135deg,#a78bfa,#6366f1);
+  --grad-sidebar:linear-gradient(180deg,#080d1a 0%,#060c18 100%);
+}
+html.light{
+  --bg:#f0f5ff;
+  --card:#ffffff;
+  --card2:#eef3ff;
+  --sidebar-bg:#ffffff;
+  --topbar-bg:#ffffffee;
+  --border:rgba(91,141,239,0.12);
+  --border2:rgba(91,141,239,0.28);
+  --text:#0f1b35;
+  --muted:#5a6a8a;
+  --surface-hover:rgba(91,141,239,0.06);
+  --surface-hover2:rgba(91,141,239,0.03);
+  --bar-bg:rgba(91,141,239,0.10);
+  --input-bg:#ffffff;
+  --turns-bg:rgba(91,141,239,0.04);
+  --shadow:0 4px 20px rgba(20,50,120,0.08);
+  --shadow-card:0 1px 6px rgba(20,50,120,0.07);
+  --glow-blue:none;--glow-green:none;--glow-red:none;--glow-purple:none;
+  --grad-sidebar:linear-gradient(180deg,#ffffff 0%,#f5f8ff 100%);
+}
+html{font-family:'DM Sans',sans-serif;font-size:14px;background:var(--bg);color:var(--text);transition:background 0.2s,color 0.2s}
+body{display:flex;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(91,141,239,0.25);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(91,141,239,0.45)}
+
+/* ── SIDEBAR ──────────────────────────────────────────────────────────────── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--grad-sidebar);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;transition:transform 0.3s,background 0.2s}
+.sidebar-logo{padding:22px 18px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.logo-mark{width:34px;height:34px;background:var(--grad-blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:var(--glow-blue)}
+.logo-text{font-size:13px;font-weight:700;letter-spacing:-0.3px;line-height:1.2;background:linear-gradient(90deg,var(--blue2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+html.light .logo-text{background:none;-webkit-text-fill-color:var(--text)}
+.logo-text span{display:block;font-weight:400;font-size:11px;color:var(--muted);-webkit-text-fill-color:var(--muted);background:none}
+
+.sidebar-agent{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--grad-blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#fff;box-shadow:0 0 0 2px rgba(91,141,239,0.3)}
+.agent-info{flex:1;min-width:0}
+.agent-name{font-size:13px;font-weight:600}
+.agent-role{font-size:11px;color:var(--muted)}
+.status-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(16,232,160,0.6);flex-shrink:0}
+
+.sidebar-nav{flex:1;padding:10px 10px;overflow-y:auto}
+.nav-section{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:14px 8px 6px;opacity:0.65}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;cursor:pointer;transition:all 0.18s;color:var(--muted);font-size:13px;font-weight:500;margin-bottom:2px;user-select:none;position:relative}
+.nav-item:hover{background:var(--surface-hover);color:var(--text)}
+.nav-item.active{background:linear-gradient(90deg,rgba(91,141,239,0.18),rgba(91,141,239,0.06));color:var(--blue2);border:1px solid rgba(91,141,239,0.18)}
+.nav-item.active .icon{filter:drop-shadow(0 0 4px rgba(91,141,239,0.6))}
+.nav-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;transition:filter 0.18s}
+.nav-badge{margin-left:auto;background:var(--grad-red);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:20px;text-align:center;box-shadow:var(--glow-red)}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border)}
+.sidebar-date{font-size:11px;color:var(--muted)}
+.be-dot{display:inline-block;width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.be-demo{background:var(--muted)}
+.be-live{background:var(--green);box-shadow:0 0 7px rgba(16,232,160,0.6)}
+.be-offline{background:var(--red)}
+
+/* ── MAIN LAYOUT ─────────────────────────────────────────────────────────── */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--topbar-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:50;transition:background 0.2s}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:4px}
+.hamburger span{width:20px;height:2px;background:var(--muted);border-radius:2px;transition:all 0.3s}
+.page-title{font-size:15px;font-weight:700;letter-spacing:-0.2px;background:linear-gradient(90deg,var(--text),var(--blue2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+html.light .page-title{background:none;-webkit-text-fill-color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+
+/* ── BUTTONS ────────────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:9px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all 0.18s;letter-spacing:-0.1px}
+.btn-primary{background:var(--grad-blue);color:#fff;box-shadow:0 4px 14px rgba(59,126,248,0.35)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,126,248,0.45)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-hover);color:var(--text);border-color:var(--border2)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.view-content{flex:1;padding:26px;overflow-y:auto}
+
+/* ── THEME TOGGLE ────────────────────────────────────────────────────────── */
+.theme-toggle{padding:6px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:15px;transition:all 0.18s;display:flex;align-items:center;justify-content:center;width:36px;height:36px}
+.theme-toggle:hover{background:var(--surface-hover);color:var(--text);border-color:var(--border2)}
+
+/* ── DATE RANGE BAR ─────────────────────────────────────────────────────── */
+.date-range-bar{background:var(--topbar-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+  padding:0 24px;height:44px;display:flex;align-items:center;gap:6px;position:sticky;top:58px;z-index:49;transition:background 0.2s}
+.range-pill{padding:4px 14px;border-radius:20px;border:1px solid transparent;background:transparent;
+  color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:inherit;white-space:nowrap}
+.range-pill:hover{color:var(--text);border-color:var(--border2);background:var(--surface-hover)}
+.range-pill.active{background:linear-gradient(90deg,rgba(91,141,239,0.18),rgba(91,141,239,0.08));border-color:rgba(91,141,239,0.35);color:var(--blue2)}
+.range-divider{width:1px;height:18px;background:var(--border);margin:0 4px}
+.range-pill.report-btn{color:var(--purple);border-color:rgba(167,139,250,0.25);background:rgba(167,139,250,0.07);margin-left:auto}
+.range-pill.report-btn:hover{background:rgba(167,139,250,0.15)}
+
+/* ── ALERT BANNERS ────────────────────────────────────────────────────────── */
+.alert-banner{border-radius:12px;padding:13px 16px;margin-bottom:20px;display:flex;align-items:flex-start;gap:11px}
+.alert-banner.red{background:rgba(244,111,111,0.08);border:1px solid rgba(244,111,111,0.22);box-shadow:var(--glow-red)}
+.alert-banner.amber{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.22)}
+.alert-banner .alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-banner .alert-content{flex:1}
+.alert-banner .alert-title{font-size:13px;font-weight:700;margin-bottom:5px}
+.alert-banner.red .alert-title{color:var(--red)}
+.alert-banner.amber .alert-title{color:var(--amber)}
+.alert-banner .alert-items{list-style:none;display:flex;flex-direction:column;gap:3px}
+.alert-banner .alert-items li{font-size:12px;color:var(--muted)}
+.alert-banner .alert-items li span{color:var(--text);font-weight:600}
+
+/* ── PROGRESS ────────────────────────────────────────────────────────────── */
+.progress-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.progress-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;flex-wrap:wrap;gap:8px}
+.progress-title{font-size:13px;font-weight:700}
+.progress-counts{display:flex;gap:16px;flex-wrap:wrap}
+.count-pill{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.count-pill .dot{width:7px;height:7px;border-radius:50%}
+.progress-bar-wrap{height:8px;background:var(--bar-bg);border-radius:10px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#3b7ef8,#a78bfa,#22d3ee);background-size:200% 100%;animation:shimmer 2.5s linear infinite;transition:width 0.6s ease}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* ── FILTER PILLS ───────────────────────────────────────────────────────── */
+.filter-pills{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.pill{padding:6px 15px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:inherit}
+.pill:hover{border-color:var(--border2);color:var(--text);background:var(--surface-hover)}
+.pill.active{background:linear-gradient(90deg,rgba(91,141,239,0.18),rgba(91,141,239,0.08));border-color:rgba(91,141,239,0.35);color:var(--blue2)}
+.pill.urgent.active{background:rgba(244,111,111,0.12);border-color:rgba(244,111,111,0.3);color:var(--red)}
+
+/* ── CALL CARDS ─────────────────────────────────────────────────────────── */
+.calls-list{display:flex;flex-direction:column;gap:12px}
+.call-card{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.22s;box-shadow:var(--shadow-card)}
+.call-card:hover{border-color:var(--border2);box-shadow:var(--shadow);transform:translateY(-1px)}
+.call-card.urgent{border-left-color:var(--red);background:linear-gradient(90deg,rgba(244,111,111,0.04),transparent)}
+.call-card.urgent:hover{box-shadow:var(--shadow),var(--glow-red)}
+.call-card.high{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(245,158,11,0.04),transparent)}
+.call-card.normal{border-left-color:var(--green);background:linear-gradient(90deg,rgba(16,232,160,0.03),transparent)}
+.call-card.highlighted{box-shadow:0 0 0 2px var(--blue)!important;border-color:var(--blue)!important}
+.card-body{padding:16px 20px}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.card-top-left{flex:1;min-width:0}
+.customer-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.customer-name{font-size:14px;font-weight:700}
+.business-name{font-size:12px;color:var(--muted);margin-bottom:2px}
+.policy-line{font-size:12px;color:var(--muted)}
+.policy-amount{color:var(--text);font-weight:700}
+.card-top-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.call-meta{font-size:11px;color:var(--muted);text-align:right}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
+.badge-topic{background:rgba(91,141,239,0.14);color:var(--blue2);border:1px solid rgba(91,141,239,0.18)}
+.badge-churn-high{background:rgba(244,111,111,0.13);color:var(--red);border:1px solid rgba(244,111,111,0.18)}
+.badge-churn-med{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.18)}
+.badge-escalated{background:rgba(167,139,250,0.13);color:var(--purple);border:1px solid rgba(167,139,250,0.18)}
+.badge-urgent{background:rgba(244,111,111,0.13);color:var(--red)}
+.badge-high{background:rgba(245,158,11,0.12);color:var(--amber)}
+.badge-normal{background:rgba(16,232,160,0.10);color:var(--green)}
+.badges-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.call-summary{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:12px}
+.what-to-do{background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.18);border-radius:10px;padding:12px 15px;margin-bottom:12px}
+.what-to-do-label{font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.what-to-do-text{font-size:13px;color:var(--text);line-height:1.65}
+.sentiment-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sentiment-arc{display:flex;align-items:center;gap:4px}
+.arc-label{font-size:11px;color:var(--muted);margin-right:4px}
+.arc-sq{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.arc-arrow{color:var(--muted);font-size:10px}
+.overall-score{font-size:18px;margin-left:4px}
+.sentiment-1{background:#b91c1c}.sentiment-2{background:#b45309}.sentiment-3{background:#334155}.sentiment-4{background:#047857}.sentiment-5{background:#065f46}
+.status-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.status-btn{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.status-btn:hover{border-color:var(--border2);color:var(--text)}
+.status-btn.active-todo{background:rgba(107,127,163,0.1);border-color:rgba(107,127,163,0.3);color:var(--muted)}
+.status-btn.active-inprogress{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:var(--amber)}
+.status-btn.active-done{background:rgba(16,232,160,0.1);border-color:rgba(16,232,160,0.3);color:var(--green)}
+.turns-btn{padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:inherit;font-size:12px;cursor:pointer;transition:all 0.15s;margin-left:auto}
+.turns-btn:hover{background:var(--surface-hover);color:var(--text);border-color:var(--border2)}
+.turns-section{border-top:1px solid var(--border);background:var(--turns-bg);padding:16px 20px;display:none;flex-direction:column;gap:10px}
+.turns-section.open{display:flex}
+.turn-item{display:flex;gap:10px;align-items:flex-start}
+.turn-speaker{flex-shrink:0;padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.speaker-agent{background:rgba(91,141,239,0.15);color:var(--blue2);border:1px solid rgba(91,141,239,0.2)}
+.speaker-customer{background:rgba(167,139,250,0.15);color:var(--purple);border:1px solid rgba(167,139,250,0.2)}
+.turn-content{flex:1}
+.turn-text{font-size:12px;color:var(--text);line-height:1.55;margin-bottom:5px}
+.turn-meta{display:flex;gap:6px;flex-wrap:wrap}
+.turn-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--bar-bg);color:var(--muted)}
+
+/* ── STAT CARDS ──────────────────────────────────────────────────────────── */
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:13px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow-card);position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(91,141,239,0.04) 0%,transparent 60%);pointer-events:none}
+.stat-label{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.7px}
+.stat-value{font-size:28px;font-weight:800;line-height:1;margin-bottom:6px;letter-spacing:-0.5px}
+.stat-delta{font-size:12px;display:flex;align-items:center;gap:4px;font-weight:500}
+.delta-up{color:var(--green)}.delta-down{color:var(--red)}.delta-flat{color:var(--muted)}
+
+/* ── SCORE CARDS ─────────────────────────────────────────────────────────── */
+.score-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px}
+.score-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;text-align:center;box-shadow:var(--shadow-card);transition:transform 0.18s,box-shadow 0.18s}
+.score-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.score-card-icon{font-size:24px;margin-bottom:9px}
+.score-card-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:10px;font-weight:600}
+.score-card-value{font-size:40px;font-weight:800;line-height:1;margin-bottom:9px;letter-spacing:-1px}
+.score-card-delta{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;display:inline-block}
+
+/* ── CHART CARDS ─────────────────────────────────────────────────────────── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow-card);position:relative;overflow:hidden}
+.chart-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cc-accent,var(--grad-blue));opacity:0.7}
+.chart-card.full{grid-column:1/-1}
+.chart-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:7px}
+.chart-wrap{position:relative;height:220px}
+.chart-wrap.tall{height:260px}
+
+/* ── FILTERS ROW ─────────────────────────────────────────────────────────── */
+.filters-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.filter-select{background:var(--input-bg);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;padding:7px 13px;border-radius:9px;cursor:pointer;outline:none;transition:border-color 0.15s}
+.filter-select:hover,.filter-select:focus{border-color:var(--border2)}
+.filter-label{font-size:12px;color:var(--muted);font-weight:500}
+
+/* ── LEADERBOARD ─────────────────────────────────────────────────────────── */
+.leaderboard{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.leaderboard-header{padding:16px 20px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700}
+.leaderboard-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);transition:background 0.15s}
+.leaderboard-row:last-child{border-bottom:none}
+.leaderboard-row:hover{background:var(--surface-hover2)}
+.lb-rank{font-size:16px;font-weight:800;width:24px;flex-shrink:0;color:var(--muted)}
+.lb-rank.top{color:var(--amber)}
+.lb-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.lb-name{flex:1;font-size:13px;font-weight:600}
+.lb-bar-wrap{width:120px;flex-shrink:0}
+.lb-bar-bg{height:6px;background:var(--bar-bg);border-radius:10px;margin-bottom:3px;overflow:hidden}
+.lb-bar-fill{height:6px;border-radius:10px;background:var(--grad-blue)}
+.lb-score{font-size:12px;color:var(--muted)}
+.lb-badge{padding:2px 9px;border-radius:5px;font-size:10px;font-weight:700;flex-shrink:0}
+.lb-badge.top-badge{background:rgba(245,158,11,0.14);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.lb-badge.review-badge{background:rgba(244,111,111,0.12);color:var(--red)}
+.lb-badge.good-badge{background:rgba(16,232,160,0.10);color:var(--green)}
+
+/* ── PRIORITY LIST ──────────────────────────────────────────────────────── */
+.priority-list{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.priority-header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.priority-header-title{font-size:13px;font-weight:700}
+.priority-item{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s}
+.priority-item:last-child{border-bottom:none}
+.priority-item:hover{background:var(--surface-hover2)}
+.priority-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.priority-item-name{flex:1;font-size:13px;font-weight:600}
+.priority-item-topic{font-size:11px;color:var(--muted)}
+
+/* ── SCORES TABLE ────────────────────────────────────────────────────────── */
+.scores-table{width:100%;border-collapse:collapse}
+.scores-table th{text-align:left;padding:10px 16px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;border-bottom:1px solid var(--border)}
+.scores-table td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.scores-table tr:last-child td{border-bottom:none}
+.scores-table tr:hover td{background:var(--surface-hover2)}
+.mini-bar-bg{height:4px;background:var(--bar-bg);border-radius:4px;margin-top:3px;width:60px;overflow:hidden}
+.mini-bar-fill{height:4px;border-radius:4px}
+
+/* ── UPLOAD ──────────────────────────────────────────────────────────────── */
+.upload-zone{background:var(--card);border:2px dashed rgba(91,141,239,0.3);border-radius:18px;padding:52px 36px;
+  text-align:center;cursor:pointer;transition:all 0.22s;position:relative;box-shadow:var(--shadow-card)}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--blue2);background:rgba(91,141,239,0.06);box-shadow:var(--glow-blue)}
+.upload-icon{font-size:52px;margin-bottom:18px}
+.upload-title{font-size:20px;font-weight:800;margin-bottom:8px;letter-spacing:-0.3px}
+.upload-subtitle{font-size:13px;color:var(--muted);margin-bottom:22px}
+.upload-formats{font-size:12px;color:var(--muted);background:var(--bar-bg);border-radius:7px;padding:6px 14px;display:inline-block}
+.upload-progress{margin-top:28px;display:none}
+.upload-progress-bar-bg{height:8px;background:var(--bar-bg);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.upload-progress-bar-fill{height:100%;background:linear-gradient(90deg,#3b7ef8,#a78bfa,#22d3ee);background-size:200% 100%;
+  animation:shimmer 2.5s linear infinite;border-radius:10px;width:0%;transition:width 0.4s ease}
+.upload-stages{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.stage-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.stage-item.active{color:var(--text)}.stage-item.done{color:var(--green)}
+.stage-icon{width:18px;text-align:center}
+.upload-success{display:none;margin-top:24px}
+.upload-success-msg{background:rgba(16,232,160,0.08);border:1px solid rgba(16,232,160,0.22);border-radius:12px;padding:16px 22px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;box-shadow:var(--glow-green)}
+
+/* ── AGENT SWITCHER ──────────────────────────────────────────────────────── */
+.sidebar-agent-area{padding:12px 14px;border-bottom:1px solid var(--border);position:relative}
+.agent-switcher-btn{display:flex;align-items:center;gap:10px;cursor:pointer;padding:7px 9px;border-radius:11px;transition:background 0.15s;width:100%}
+.agent-switcher-btn:hover{background:var(--surface-hover)}
+.agent-switcher-chevron{margin-left:auto;font-size:10px;color:var(--muted);transition:transform 0.2s}
+.agent-switcher-chevron.open{transform:rotate(180deg)}
+.agent-dropdown-panel{background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-top:6px;overflow:hidden;box-shadow:var(--shadow);display:none}
+.agent-dropdown-panel.open{display:block}
+.agent-dropdown-item{display:flex;align-items:center;gap:10px;padding:10px 13px;cursor:pointer;transition:background 0.15s;font-size:13px}
+.agent-dropdown-item:hover{background:var(--surface-hover)}
+.agent-dropdown-item.active-agent{background:rgba(91,141,239,0.1)}
+.agent-dropdown-item .check{margin-left:auto;color:var(--blue2);font-size:13px}
+.agent-add-btn{display:flex;align-items:center;gap:8px;padding:10px 13px;cursor:pointer;font-size:12px;
+  color:var(--blue2);border-top:1px solid var(--border);font-weight:600;transition:background 0.15s}
+.agent-add-btn:hover{background:var(--surface-hover)}
+.mini-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:#fff}
+
+/* ── SETTINGS ───────────────────────────────────────────────────────────── */
+.settings-wrap{max-width:700px}
+.settings-section{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.settings-section-header{padding:17px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.settings-section-title{font-size:13px;font-weight:700}
+.settings-section-sub{font-size:11px;color:var(--muted)}
+.agent-manage-card{display:flex;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--border);transition:background 0.15s}
+.agent-manage-card:last-child{border-bottom:none}
+.agent-manage-card:hover{background:var(--surface-hover2)}
+.agent-manage-info{flex:1}
+.agent-manage-name{font-size:13px;font-weight:700}
+.agent-manage-role{font-size:11px;color:var(--muted);margin-top:2px}
+.agent-manage-actions{display:flex;gap:6px}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.15s}
+.icon-btn:hover{background:var(--surface-hover);border-color:var(--border2)}
+.icon-btn.danger:hover{background:rgba(244,111,111,0.1);border-color:var(--red)}
+
+/* ── ADD AGENT FORM ──────────────────────────────────────────────────────── */
+.add-agent-form{padding:22px;background:var(--card2);border-top:1px solid var(--border);display:none}
+.add-agent-form.open{display:block}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px}
+.form-input{background:var(--input-bg);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;padding:9px 13px;border-radius:9px;outline:none;width:100%;transition:border-color 0.15s}
+.form-input:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(91,141,239,0.12)}
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.color-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.15s;flex-shrink:0}
+.color-swatch:hover,.color-swatch.selected{border-color:var(--text);transform:scale(1.15)}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* ── SETTINGS TOGGLES ────────────────────────────────────────────────────── */
+.settings-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--border)}
+.settings-toggle-row:last-child{border-bottom:none}
+.settings-toggle-label{font-size:13px;font-weight:600}
+.settings-toggle-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bar-bg);border-radius:24px;cursor:pointer;transition:0.3s;border:1px solid var(--border)}
+.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:2px;top:2px;background:#fff;border-radius:50%;transition:0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+input:checked+.toggle-slider{background:var(--grad-blue);border-color:transparent}
+input:checked+.toggle-slider:before{transform:translateX(20px)}
+
+/* ── PERFORMANCE KPIs ────────────────────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:20px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:17px;position:relative;overflow:hidden;box-shadow:var(--shadow-card);transition:transform 0.18s,box-shadow 0.18s}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.kpi-card::after{content:'';position:absolute;bottom:0;right:0;width:80px;height:80px;border-radius:50%;opacity:0.06;pointer-events:none}
+.kpi-icon{font-size:19px;margin-bottom:9px}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.kpi-value{font-size:30px;font-weight:800;line-height:1;margin-bottom:5px;letter-spacing:-0.5px}
+.kpi-delta{font-size:11px;color:var(--muted);font-weight:500}
+.kpi-bar-bg{height:3px;background:var(--bar-bg);border-radius:10px;margin-top:11px;overflow:hidden}
+.kpi-bar-fill{height:3px;border-radius:10px;transition:width 0.6s}
+
+/* ── PRIORITY WIDGET CARDS ───────────────────────────────────────────────── */
+.priority-widgets{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.pw-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative;
+  transition:transform 0.18s,box-shadow 0.18s;box-shadow:var(--shadow-card)}
+.pw-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.pw-top-bar{height:5px;width:100%}
+.pw-inner{padding:20px 22px 18px}
+.pw-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.pw-number{font-size:52px;font-weight:800;line-height:1;margin-bottom:10px;letter-spacing:-2px}
+.pw-delta{font-size:12px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:5px}
+.pw-delta .arrow{font-size:11px}
+
+/* ── WIDE STATS ──────────────────────────────────────────────────────────── */
+.wide-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
+.wide-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;text-align:center;box-shadow:var(--shadow-card);transition:transform 0.18s}
+.wide-stat:hover{transform:translateY(-1px)}
+.wide-stat-val{font-size:24px;font-weight:800;margin-bottom:5px;letter-spacing:-0.5px}
+.wide-stat-label{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted)}
+.wide-stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ── CHARTS 3-COL ────────────────────────────────────────────────────────── */
+.charts-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+
+/* ── REPORT CARD ─────────────────────────────────────────────────────────── */
+.report-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;margin-bottom:20px;box-shadow:var(--shadow-card)}
+.report-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.report-title{font-size:18px;font-weight:800;letter-spacing:-0.3px}
+.report-period{font-size:12px;color:var(--muted);margin-top:2px}
+.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px}
+.report-metric{text-align:center;padding:16px;background:var(--card2);border-radius:12px;border:1px solid var(--border)}
+.report-metric-val{font-size:24px;font-weight:800;margin-bottom:4px;letter-spacing:-0.5px}
+.report-metric-label{font-size:11px;color:var(--muted);font-weight:500}
+.report-section-title{font-size:13px;font-weight:700;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.history-call-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.history-call-row:last-child{border-bottom:none}
+.history-call-info{flex:1}
+.history-call-name{font-size:13px;font-weight:600}
+.history-call-meta{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── MISC ────────────────────────────────────────────────────────────────── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:17px;font-weight:800;letter-spacing:-0.3px}
+.section-sub{font-size:12px;color:var(--muted)}
+.coaching-card{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:15px 17px;margin-bottom:10px;border-left:3px solid var(--green)}
+.coaching-call-ref{font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.coaching-text{font-size:13px;color:var(--text);line-height:1.55}
+.empty-state{text-align:center;padding:52px 24px;color:var(--muted)}
+.empty-icon{font-size:40px;margin-bottom:14px}
+
+/* ── GLOW NUMBER HELPER ──────────────────────────────────────────────────── */
+.glow-text-blue{filter:drop-shadow(0 0 8px rgba(91,141,239,0.5))}
+.glow-text-green{filter:drop-shadow(0 0 8px rgba(16,232,160,0.5))}
+.glow-text-red{filter:drop-shadow(0 0 8px rgba(244,111,111,0.5))}
+.glow-text-amber{filter:drop-shadow(0 0 8px rgba(245,158,11,0.4))}
+
+/* ── MOBILE ──────────────────────────────────────────────────────────────── */
+@media(max-width:1024px){
+  .charts-grid-3{grid-template-columns:1fr 1fr}
+  .wide-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .score-cards{grid-template-columns:1fr}
+  .charts-grid{grid-template-columns:1fr}
+  .charts-grid-3{grid-template-columns:1fr}
+  .stat-cards{grid-template-columns:repeat(2,1fr)}
+  .priority-widgets{grid-template-columns:1fr}
+  .wide-stats{grid-template-columns:repeat(2,1fr)}
+  .view-content{padding:16px}
+  .overlay{display:block!important}
+  .date-range-bar{padding:0 16px;overflow-x:auto}
+}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:90}
+.overlay.show{display:block}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.pulse{animation:pulse 1.5s infinite}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn 0.28s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes staggerIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.stagger-item{opacity:0;animation:staggerIn 0.3s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes toastSlide{from{opacity:0;transform:translateX(110%)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastFade{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+@keyframes skeletonShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SKELETON ────────────────────────────────────────────────────────────── */
+.skeleton{background:linear-gradient(90deg,var(--card2) 25%,rgba(99,130,255,0.08) 50%,var(--card2) 75%);
+  background-size:200% 100%;animation:skeletonShimmer 1.4s ease-in-out infinite;border-radius:6px}
+.skeleton-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px}
+.skel-line{height:12px;margin-bottom:8px}.skel-line.w-60{width:60%}.skel-line.w-80{width:80%}.skel-line.w-40{width:40%}.skel-line.w-30{width:30%}
+.skel-bar{height:8px;border-radius:10px}
+
+/* ── TOAST ───────────────────────────────────────────────────────────────── */
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;
+  pointer-events:all;box-shadow:0 8px 32px rgba(0,0,0,0.45);min-width:240px;max-width:340px;
+  animation:toastSlide 0.35s cubic-bezier(0.22,1,0.36,1) forwards;border:1px solid transparent}
+.toast.success{background:linear-gradient(135deg,rgba(16,232,160,0.15),rgba(34,211,238,0.08));
+  border-color:rgba(16,232,160,0.25);color:var(--green)}
+.toast.info{background:linear-gradient(135deg,rgba(91,141,239,0.15),rgba(167,139,250,0.08));
+  border-color:rgba(91,141,239,0.25);color:var(--blue2)}
+.toast.warning{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(249,115,22,0.08));
+  border-color:rgba(245,158,11,0.25);color:var(--amber)}
+.toast.error{background:linear-gradient(135deg,rgba(244,111,111,0.15),rgba(236,72,153,0.08));
+  border-color:rgba(244,111,111,0.25);color:var(--red)}
+.toast .toast-icon{font-size:16px;flex-shrink:0}
+.toast .toast-close{margin-left:auto;background:none;border:none;cursor:pointer;color:inherit;opacity:0.6;font-size:14px;padding:0;line-height:1}
+.toast.hiding{animation:toastFade 0.3s ease forwards}
+
+/* ── COMMAND PALETTE ─────────────────────────────────────────────────────── */
+#cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);z-index:8000;
+  display:none;align-items:flex-start;justify-content:center;padding-top:120px}
+#cmd-overlay.open{display:flex}
+#cmd-modal{background:var(--card2);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:580px;
+  overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,0.6);animation:scaleIn 0.2s ease}
+#cmd-input-wrap{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--border)}
+#cmd-input-wrap .cmd-icon{font-size:18px;color:var(--muted);flex-shrink:0}
+#cmd-input{flex:1;background:transparent;border:none;outline:none;font-family:inherit;font-size:15px;
+  font-weight:500;color:var(--text)}
+#cmd-input::placeholder{color:var(--muted)}
+#cmd-input-wrap .cmd-hint{font-size:11px;color:var(--muted);background:var(--bar-bg);padding:2px 8px;border-radius:5px;white-space:nowrap;flex-shrink:0}
+#cmd-results{max-height:380px;overflow-y:auto;padding:8px}
+.cmd-section-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;padding:8px 12px 4px}
+.cmd-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;
+  transition:background 0.12s;user-select:none}
+.cmd-item:hover,.cmd-item.selected{background:rgba(91,141,239,0.12)}
+.cmd-item .cmd-item-icon{font-size:15px;width:24px;text-align:center;flex-shrink:0}
+.cmd-item .cmd-item-main{flex:1;min-width:0}
+.cmd-item .cmd-item-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmd-item .cmd-item-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.cmd-item .cmd-item-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;flex-shrink:0}
+.cmd-item .cmd-item-kbd{font-size:10px;color:var(--muted);background:var(--bar-bg);padding:2px 7px;border-radius:4px;flex-shrink:0}
+#cmd-footer{padding:10px 20px;border-top:1px solid var(--border);display:flex;gap:16px;font-size:11px;color:var(--muted)}
+#cmd-footer span{display:flex;align-items:center;gap:4px}
+#cmd-footer kbd{background:var(--bar-bg);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--text)}
+
+/* ── NOTIFICATION BELL ────────────────────────────────────────────────────── */
+.notif-btn{position:relative;padding:0;width:36px;height:36px;border-radius:9px;border:1px solid var(--border);
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all 0.15s}
+.notif-btn:hover{background:var(--surface-hover);border-color:var(--border2)}
+.notif-count{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--red);
+  box-shadow:0 0 8px rgba(244,111,111,0.6);border:2px solid var(--topbar-bg)}
+.notif-panel{position:absolute;top:calc(100% + 8px);right:0;width:340px;background:var(--card2);
+  border:1px solid var(--border2);border-radius:16px;box-shadow:var(--shadow);z-index:500;
+  display:none;animation:slideDown 0.2s ease;overflow:hidden}
+.notif-panel.open{display:block}
+.notif-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.notif-header-title{font-size:13px;font-weight:700}
+.notif-mark-read{font-size:11px;color:var(--blue2);cursor:pointer;background:none;border:none;font-family:inherit;font-weight:600}
+.notif-mark-read:hover{opacity:0.8}
+.notif-list{max-height:320px;overflow-y:auto}
+.notif-item{display:flex;align-items:flex-start;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background 0.12s;position:relative}
+.notif-item:last-child{border-bottom:none}
+.notif-item:hover{background:var(--surface-hover2)}
+.notif-item.unread{background:rgba(91,141,239,0.05)}
+.notif-item.unread::before{content:'';position:absolute;left:6px;top:50%;transform:translateY(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--blue2)}
+.notif-dot{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-size:12px;font-weight:600;margin-bottom:2px}
+.notif-desc{font-size:11px;color:var(--muted);line-height:1.45}
+.notif-time{font-size:10px;color:var(--muted);margin-top:3px;font-weight:500}
+.notif-empty{padding:32px;text-align:center;color:var(--muted);font-size:13px}
+.notif-area{position:relative}
+
+/* ── SEARCH BAR ──────────────────────────────────────────────────────────── */
+.search-bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:20px;background:var(--card);
+  border:1px solid var(--border);border-radius:11px;padding:10px 14px;transition:border-color 0.15s;box-shadow:var(--shadow-card)}
+.search-bar-wrap:focus-within{border-color:var(--border2);box-shadow:0 0 0 3px rgba(91,141,239,0.1)}
+.search-bar-wrap .search-icon{font-size:15px;color:var(--muted);flex-shrink:0}
+.search-input{flex:1;background:transparent;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text)}
+.search-input::placeholder{color:var(--muted)}
+.search-count{font-size:11px;color:var(--muted);white-space:nowrap;font-weight:500}
+
+/* ── KEYBOARD SHORTCUTS OVERLAY ──────────────────────────────────────────── */
+#shortcuts-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);
+  z-index:8000;display:none;align-items:center;justify-content:center}
+#shortcuts-overlay.open{display:flex}
+#shortcuts-modal{background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:28px 32px;
+  width:100%;max-width:520px;box-shadow:0 32px 80px rgba(0,0,0,0.6);animation:scaleIn 0.2s ease}
+#shortcuts-modal h3{font-size:16px;font-weight:800;margin-bottom:20px;background:linear-gradient(90deg,var(--text),var(--blue2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+html.light #shortcuts-modal h3{background:none;-webkit-text-fill-color:var(--text)}
+.shortcut-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shortcut-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--card);border-radius:8px;border:1px solid var(--border)}
+.shortcut-desc{font-size:12px;color:var(--muted)}
+.shortcut-keys{display:flex;gap:4px}
+.shortcut-keys kbd{background:var(--bar-bg);border:1px solid var(--border2);border-radius:5px;padding:2px 8px;font-size:11px;font-family:inherit;font-weight:700;color:var(--text)}
+
+/* ── CALL CARD ENHANCEMENTS ──────────────────────────────────────────────── */
+.customer-avatar{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;flex-shrink:0;color:#fff;letter-spacing:-0.5px}
+.score-pills{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.score-pill{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid transparent}
+.score-pill .spval{font-size:12px}
+.talk-ratio-bar{height:5px;border-radius:10px;overflow:hidden;background:rgba(167,139,250,0.15);margin-top:2px;width:100%;position:relative;display:flex}
+.talk-ratio-agent{height:100%;background:var(--grad-blue);border-radius:10px 0 0 10px}
+.talk-ratio-cust{height:100%;background:linear-gradient(90deg,#a78bfa,#ec4899);border-radius:0 10px 10px 0}
+.card-meta-row{display:flex;align-items:center;gap:14px;margin-bottom:11px;flex-wrap:wrap}
+.card-meta-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.card-meta-item strong{color:var(--text);font-weight:600}
+
+/* ── SORTABLE TABLE ──────────────────────────────────────────────────────── */
+.scores-table th.sortable{cursor:pointer;user-select:none;transition:color 0.15s;white-space:nowrap}
+.scores-table th.sortable:hover{color:var(--text)}
+.scores-table th.sorted{color:var(--blue2)}
+.sort-asc{color:var(--green);font-size:9px;margin-left:4px;vertical-align:middle}
+.sort-desc{color:var(--red);font-size:9px;margin-left:4px;vertical-align:middle}
+.sort-neutral{color:var(--muted);font-size:9px;margin-left:4px;vertical-align:middle;opacity:0.5}
+
+/* ── SEARCH BTN ──────────────────────────────────────────────────────────── */
+.search-topbar-btn{padding:0;width:36px;height:36px;border-radius:9px;border:1px solid var(--border);
+  background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;
+  transition:all 0.15s;color:var(--muted)}
+.search-topbar-btn:hover{background:var(--surface-hover);border-color:var(--border2);color:var(--text)}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- Command Palette -->
+<div id="cmd-overlay" onclick="closeCmd(event)">
+  <div id="cmd-modal">
+    <div id="cmd-input-wrap">
+      <span class="cmd-icon">🔍</span>
+      <input id="cmd-input" type="text" placeholder="Search calls, navigate to views…" autocomplete="off"
+        oninput="renderCmdResults()" onkeydown="cmdKeydown(event)">
+      <span class="cmd-hint">ESC to close</span>
+    </div>
+    <div id="cmd-results"></div>
+    <div id="cmd-footer">
+      <span><kbd>↑↓</kbd> Navigate</span>
+      <span><kbd>↵</kbd> Select</span>
+      <span><kbd>ESC</kbd> Close</span>
+      <span><kbd>⌘K</kbd> Toggle</span>
+    </div>
+  </div>
+</div>
+
+<!-- Keyboard Shortcuts Overlay -->
+<div id="shortcuts-overlay" onclick="closeShortcuts(event)">
+  <div id="shortcuts-modal">
+    <h3>⌨️ Keyboard Shortcuts</h3>
+    <div class="shortcut-grid">
+      <div class="shortcut-row"><span class="shortcut-desc">Open command palette</span><span class="shortcut-keys"><kbd>⌘</kbd><kbd>K</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Show shortcuts</span><span class="shortcut-keys"><kbd>?</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Action Board</span><span class="shortcut-keys"><kbd>G</kbd><kbd>A</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">My Performance</span><span class="shortcut-keys"><kbd>G</kbd><kbd>P</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Dashboard</span><span class="shortcut-keys"><kbd>G</kbd><kbd>D</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">All Calls</span><span class="shortcut-keys"><kbd>G</kbd><kbd>C</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Agent Scores</span><span class="shortcut-keys"><kbd>G</kbd><kbd>S</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Upload Batch</span><span class="shortcut-keys"><kbd>G</kbd><kbd>U</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Toggle theme</span><span class="shortcut-keys"><kbd>T</kbd></span></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Refresh view</span><span class="shortcut-keys"><kbd>R</kbd></span></div>
+    </div>
+    <div style="margin-top:16px;font-size:11px;color:var(--muted);text-align:center">Press <strong>ESC</strong> or click outside to close</div>
+  </div>
+</div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">⚡</div>
+    <div class="logo-text">Lightspeed<span>Call Intelligence</span></div>
+  </div>
+  <div class="sidebar-agent-area">
+    <div class="agent-switcher-btn" onclick="toggleAgentDropdown()" id="agent-switcher-btn">
+      <div class="avatar" id="sidebar-avatar" style="background:linear-gradient(135deg,#4f8ef7,#a78bfa)">RN</div>
+      <div class="agent-info">
+        <div class="agent-name" id="sidebar-agent-name">Rajan Nurine</div>
+        <div class="agent-role" id="sidebar-agent-role">Senior Agent</div>
+      </div>
+      <div class="status-dot"></div>
+      <span class="agent-switcher-chevron" id="switcher-chevron">▾</span>
+    </div>
+    <div class="agent-dropdown-panel" id="agent-dropdown-panel"></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">My Workspace</div>
+    <div class="nav-item active" data-view="action-board" onclick="navigate(this,'action-board')">
+      <span class="icon">📋</span>My Action Board
+      <span class="nav-badge" id="urgent-badge">2</span>
+    </div>
+    <div class="nav-item" data-view="performance" onclick="navigate(this,'performance')">
+      <span class="icon">📈</span>My Performance
+    </div>
+    <div class="nav-section">Team</div>
+    <div class="nav-item" data-view="dashboard" onclick="navigate(this,'dashboard')">
+      <span class="icon">🏠</span>Dashboard
+    </div>
+    <div class="nav-item" data-view="all-calls" onclick="navigate(this,'all-calls')">
+      <span class="icon">📞</span>All Calls
+    </div>
+    <div class="nav-item" data-view="agent-scores" onclick="navigate(this,'agent-scores')">
+      <span class="icon">🏆</span>Agent Scores
+    </div>
+    <div class="nav-section">Operations</div>
+    <div class="nav-item" data-view="upload" onclick="navigate(this,'upload')">
+      <span class="icon">📤</span>Upload Batch
+    </div>
+    <div class="nav-section">Account</div>
+    <div class="nav-item" data-view="settings" onclick="navigate(this,'settings')">
+      <span class="icon">⚙️</span>Settings
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-date" id="sidebar-date"></div>
+    <div id="backend-indicator" style="margin-top:8px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px;cursor:default">
+      <span class="be-dot be-demo"></span>Demo data
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="page-title" id="page-title">My Action Board</div>
+    </div>
+    <div class="topbar-right">
+      <button class="search-topbar-btn" onclick="openCmd()" title="Search (⌘K)">🔍</button>
+      <div class="notif-area">
+        <button class="notif-btn" onclick="toggleNotifPanel()" id="notif-btn" title="Notifications">
+          🔔<div class="notif-count" id="notif-count"></div>
+        </button>
+        <div class="notif-panel" id="notif-panel">
+          <div class="notif-header">
+            <span class="notif-header-title">Notifications</span>
+            <button class="notif-mark-read" onclick="markAllRead()">Mark all read</button>
+          </div>
+          <div class="notif-list" id="notif-list"></div>
+        </div>
+      </div>
+      <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Toggle theme (T)">🌙</button>
+      <button class="btn btn-ghost btn-sm" onclick="openShortcuts()" title="Keyboard shortcuts (?)">⌨️</button>
+      <button class="btn btn-primary btn-sm" onclick="navigate(document.querySelector('[data-view=upload]'),'upload')">📤 Upload</button>
+    </div>
+  </div>
+  <div class="date-range-bar" id="date-range-bar">
+    <button class="range-pill active" data-range="today" onclick="setRange(this,'today')">Today</button>
+    <button class="range-pill" data-range="yesterday" onclick="setRange(this,'yesterday')">Yesterday</button>
+    <div class="range-divider"></div>
+    <button class="range-pill" data-range="thisweek" onclick="setRange(this,'thisweek')">This Week</button>
+    <button class="range-pill" data-range="lastweek" onclick="setRange(this,'lastweek')">Last Week</button>
+    <div class="range-divider"></div>
+    <button class="range-pill" data-range="monthly" onclick="setRange(this,'monthly')">Monthly</button>
+    <button class="range-pill report-btn" onclick="downloadReport()">📄 Export Report</button>
+    <div class="range-divider" style="margin-left:auto"></div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      <span style="font-size:11px;color:var(--muted);white-space:nowrap">Custom date:</span>
+      <input type="date" id="custom-date-picker" class="filter-select" style="padding:4px 8px;font-size:12px;cursor:pointer"
+        onchange="setCustomDate(this.value)">
+    </div>
+  </div>
+  <div class="view-content" id="view-content"></div>
+</main>
+
+<script>
+// ─── DATE ──────────────────────────────────────────────────────────────────
+const TODAY = new Date();
+const TODAY_STR = TODAY.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById('sidebar-date').textContent = TODAY_STR;
+
+// ─── THEME ─────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const isLight = document.documentElement.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('lci-theme', isLight ? 'light' : 'dark');
+  // Refresh charts
+  Object.keys(STATE.charts).forEach(k=>{STATE.charts[k].destroy();delete STATE.charts[k];});
+  renderView();
+}
+(function initTheme(){
+  if(localStorage.getItem('lci-theme')==='light'){
+    document.documentElement.classList.add('light');
+    document.getElementById('theme-btn').textContent='☀️';
+  }
+})();
+
+// ─── AGENTS ────────────────────────────────────────────────────────────────
+const AGENT_PALETTE=['#4f8ef7','#a78bfa','#34d399','#fbbf24','#f87171','#22d3ee','#fb923c'];
+function loadAgents(){
+  try{const s=localStorage.getItem('lci-agents');return s?JSON.parse(s):null;}catch(e){return null;}
+}
+function saveAgents(){localStorage.setItem('lci-agents',JSON.stringify(AGENTS));}
+let AGENTS = loadAgents() || [
+  {id:'rajan',name:'Rajan Nurine',role:'Senior Agent',initials:'RN',color:'#4f8ef7',isDefault:true}
+];
+function updateSidebarAgent(){
+  const a=AGENTS.find(x=>x.id===STATE.currentAgent)||AGENTS[0];
+  const av=document.getElementById('sidebar-avatar');
+  const nm=document.getElementById('sidebar-agent-name');
+  const rl=document.getElementById('sidebar-agent-role');
+  if(av){av.textContent=a.initials;av.style.background=`linear-gradient(135deg,${a.color},${a.color}99)`;}
+  if(nm) nm.textContent=a.name;
+  if(rl) rl.textContent=a.role;
+}
+function toggleAgentDropdown(){
+  const panel=document.getElementById('agent-dropdown-panel');
+  const chevron=document.getElementById('switcher-chevron');
+  const isOpen=panel.classList.contains('open');
+  if(isOpen){panel.classList.remove('open');chevron.classList.remove('open');}
+  else{
+    panel.innerHTML=renderAgentDropdownHTML();
+    panel.classList.add('open');chevron.classList.add('open');
+  }
+}
+function renderAgentDropdownHTML(){
+  return AGENTS.map(a=>`
+    <div class="agent-dropdown-item ${a.id===STATE.currentAgent?'active-agent':''}" onclick="switchAgent('${a.id}')">
+      <div class="mini-avatar" style="background:${a.color}">${a.initials}</div>
+      <div><div style="font-size:13px;font-weight:500">${a.name}</div><div style="font-size:11px;color:var(--muted)">${a.role}</div></div>
+      ${a.id===STATE.currentAgent?`<span class="check">✓</span>`:''}
+    </div>`).join('')+
+  `<div class="agent-add-btn" onclick="navigate(document.querySelector('[data-view=settings]'),'settings');toggleAgentDropdown()">➕ Add Team Member</div>`;
+}
+function switchAgent(id){
+  STATE.currentAgent=id;
+  updateSidebarAgent();
+  toggleAgentDropdown();
+  destroyCharts();renderView();
+}
+function getCurrentAgent(){return AGENTS.find(a=>a.id===STATE.currentAgent)||AGENTS[0];}
+
+// ─── HISTORY DATA ──────────────────────────────────────────────────────────
+const PERF_HISTORY = {
+  rajan:[
+    {day:'Mon',tone:3.2,empathy:3.4,clarity:3.5,sentiment:3.1,fcr:62,talkBal:42,churnPrev:70,escRate:18},
+    {day:'Tue',tone:3.4,empathy:3.5,clarity:3.6,sentiment:3.3,fcr:65,talkBal:45,churnPrev:72,escRate:16},
+    {day:'Wed',tone:3.5,empathy:3.6,clarity:3.7,sentiment:3.4,fcr:68,talkBal:47,churnPrev:75,escRate:15},
+    {day:'Thu',tone:3.7,empathy:3.8,clarity:3.8,sentiment:3.5,fcr:70,talkBal:48,churnPrev:78,escRate:14},
+    {day:'Fri',tone:3.8,empathy:3.9,clarity:3.9,sentiment:3.6,fcr:72,talkBal:50,churnPrev:80,escRate:12},
+    {day:'Sat',tone:3.9,empathy:4.0,clarity:4.0,sentiment:3.7,fcr:74,talkBal:52,churnPrev:82,escRate:11},
+    {day:'Today',tone:4.0,empathy:4.2,clarity:4.2,sentiment:3.9,fcr:75,talkBal:53,churnPrev:85,escRate:10}
+  ]
+};
+function getAgentHistory(){
+  const a=getCurrentAgent();
+  return PERF_HISTORY[a.id]||PERF_HISTORY.rajan;
+}
+function get7dAvg(hist,key){return +(hist.slice(0,6).reduce((s,d)=>s+(d[key]||0),0)/6).toFixed(1);}
+const RAJAN_7D_AVG = {
+  tone:+(PERF_HISTORY.rajan.slice(0,6).reduce((a,b)=>a+b.tone,0)/6).toFixed(2),
+  empathy:+(PERF_HISTORY.rajan.slice(0,6).reduce((a,b)=>a+b.empathy,0)/6).toFixed(2),
+  clarity:+(PERF_HISTORY.rajan.slice(0,6).reduce((a,b)=>a+b.clarity,0)/6).toFixed(2)
+};
+function getPerfAvg(){
+  const h=getAgentHistory();
+  return {
+    tone:+(h.slice(0,6).reduce((a,b)=>a+b.tone,0)/6).toFixed(2),
+    empathy:+(h.slice(0,6).reduce((a,b)=>a+b.empathy,0)/6).toFixed(2),
+    clarity:+(h.slice(0,6).reduce((a,b)=>a+b.clarity,0)/6).toFixed(2)
+  };
+}
+const HOURLY_SENTIMENT=[
+  {hour:'8am',val:3.4},{hour:'9am',val:3.2},{hour:'10am',val:3.8},
+  {hour:'11am',val:4.1},{hour:'12pm',val:3.5},{hour:'1pm',val:3.3},
+  {hour:'2pm',val:3.7},{hour:'3pm',val:4.0},{hour:'4pm',val:3.6},{hour:'5pm',val:3.9}
+];
+
+// ─── PERIOD SUMMARY DATA ───────────────────────────────────────────────────
+const PERIOD_DATA = {
+  today:    {label:'Today',dateStr:TODAY_STR,calls:8,avgSent:3.2,resolved:3,escalations:2,churnHigh:2,tone:4.0,empathy:4.2,clarity:4.2,coachingNotes:2},
+  yesterday:{label:'Yesterday',dateStr:'Sunday 15 March 2026',calls:6,avgSent:3.6,resolved:5,escalations:1,churnHigh:1,tone:3.9,empathy:4.0,clarity:4.0,coachingNotes:1,
+    historyCalls:[
+      {name:'Patricia Ford',company:'Ford Property Group',topic:'Renewal',churn:'low',outcome:'resolved',sent:4,amount:'£31,000/yr',summary:'Patricia renewed her commercial portfolio for another year after a brief pricing discussion. No issues.'},
+      {name:'Kwame Adjei',company:'Adjei Imports Ltd',topic:'Claim Inquiry',churn:'medium',outcome:'follow_up_required',sent:3,amount:'£52,000',summary:'Kwame chased his stock damage claim. Waiting on a surveyor report. Callback arranged for Tuesday.'},
+      {name:'Sophie Bright',company:'Bright Events Ltd',topic:'Policy Change',churn:'low',outcome:'resolved',sent:5,amount:'£6,800/yr',summary:'Added public liability extension for a one-off outdoor event. Processed same day.'},
+      {name:'Derek Mensah',company:'Mensah Transport',topic:'Billing',churn:'low',outcome:'resolved',sent:4,amount:'£8,200/yr',summary:'Query about a premium adjustment after removing one vehicle from the fleet. Corrected and credited.'},
+      {name:'Irene Walcott',company:'Walcott & Partners',topic:'Complaint',churn:'high',outcome:'unresolved',sent:1,amount:'£78,000',summary:'Irene is furious about a rejected liability claim. Escalated to senior handler.'},
+      {name:'Raj Bhatia',company:'Bhatia Retail',topic:'General Inquiry',churn:'low',outcome:'resolved',sent:4,amount:'£4,500/yr',summary:'Asked about adding a new retail unit in Bristol. Quoted and emailed.'}
+    ]
+  },
+  thisweek: {label:'This Week',dateStr:'10–16 March 2026',calls:38,avgSent:3.5,resolved:28,escalations:5,churnHigh:6,tone:3.8,empathy:3.9,clarity:4.0,coachingNotes:7,
+    topTopics:{'Claim Inquiry':12,'Renewal':9,'Billing':7,'Complaint':5,'Policy Change':5},
+    dailyAvg:[3.2,3.4,3.6,3.5,3.8,3.7,3.9]
+  },
+  lastweek: {label:'Last Week',dateStr:'3–9 March 2026',calls:42,avgSent:3.3,resolved:30,escalations:7,churnHigh:8,tone:3.6,empathy:3.7,clarity:3.8,coachingNotes:10,
+    topTopics:{'Claim Inquiry':15,'Renewal':8,'Billing':9,'Complaint':7,'Policy Change':3},
+    dailyAvg:[3.1,3.2,3.4,3.3,3.5,3.4,3.6]
+  },
+  monthly:  {label:'March 2026',dateStr:'1–16 March 2026 (MTD)',calls:187,avgSent:3.4,resolved:138,escalations:21,churnHigh:24,tone:3.7,empathy:3.8,clarity:3.9,coachingNotes:32,
+    topTopics:{'Claim Inquiry':58,'Renewal':42,'Billing':37,'Complaint':28,'Policy Change':22},
+    dailyAvg:[3.3,3.2,3.4,3.5,3.3,3.6,3.4,3.7,3.5,3.8,3.6,3.7,3.8,3.6,3.9,3.7]
+  }
+};
+
+// ─── CALL DATA ─────────────────────────────────────────────────────────────
+const CALLS = [
+  {call_id:'CALL-001',agent:'Rajan Nurine',time:'08:23',duration:'14:32',
+   customer_name:'Margaret Okafor',customer_emoji:'🏢',business_name:'Okafor & Sons Ltd',
+   policy_type:'Commercial Property',amount:'£84,500',priority:'urgent',
+   overall_customer_sentiment:1,sentiment_arc:{opening:2,mid_call:1,closing:1},
+   agent_tone_score:3,agent_empathy_score:3,agent_clarity_score:4,
+   escalation_flag:true,churn_risk:'high',call_outcome:'unresolved',
+   primary_topic:'claim_inquiry',secondary_topics:['complaint'],
+   talk_time_ratio:{agent_pct:35,customer_pct:65},
+   call_summary:"Margaret called about her commercial property flood damage claim #CL-2291, now delayed 6 weeks with no resolution. She cannot operate her warehouse and cannot meet payroll. She explicitly threatened to transfer her entire portfolio — three properties and a commercial fleet — to a competitor by end of week.",
+   what_to_do:"📞 Call Margaret back BEFORE 12pm TODAY on 07700 900142. Confirm claim #CL-2291 has been escalated to Senior Claims Handler Diane Webb. Do NOT leave voicemail — she requested a live conversation only. Have a concrete resolution timeline ready before calling. Escalation ref: ESC-4421.",
+   coaching_note:"Great energy keeping your composure under pressure! 💪 Next time, try leading with empathy in the first 30 seconds before the account lookup — customers feel heard immediately. Swap 'there should be an update soon' for a specific timeline and a named contact to give them confidence.",
+   status:'todo',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Good morning, Lightspeed Insurance, Sarah speaking. How can I help you today?",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"This is Margaret Okafor from Okafor and Sons. I am absolutely furious. I've been waiting SIX WEEKS on claim CL-2291 and nobody is telling me anything. I've called four times!",sentiment:1,emotion:'angry',intent:'making_complaint'},
+     {speaker:'AGENT',text:"I'm sorry to hear that, Mrs Okafor. Let me pull up your account. I can see your claim for the commercial property flood damage. There has been a processing delay on this one.",sentiment:2,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"A delay? I have staff I cannot pay. My warehouse is still out of action. If this isn't resolved by Friday I'm moving everything — three properties and the fleet — to Admiral Commercial.",sentiment:1,emotion:'angry',intent:'threatening_to_leave'},
+     {speaker:'AGENT',text:"I fully understand how serious this is and I sincerely apologise. I'm escalating this to our senior claims handler right now. You'll receive a call within 24 hours with a concrete update.",sentiment:2,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"I've heard that before. I want someone who can actually make a decision. And please — no voicemails. I need a live conversation.",sentiment:1,emotion:'frustrated',intent:'making_complaint'}
+   ]},
+  {call_id:'CALL-002',agent:'Rajan Nurine',time:'09:47',duration:'18:05',
+   customer_name:'David Patel',customer_emoji:'🏢',business_name:'Patel Retail Group',
+   policy_type:'Business Interruption',amount:'£210,000',priority:'urgent',
+   overall_customer_sentiment:1,sentiment_arc:{opening:2,mid_call:1,closing:2},
+   agent_tone_score:4,agent_empathy_score:3,agent_clarity_score:4,
+   escalation_flag:true,churn_risk:'high',call_outcome:'follow_up_required',
+   primary_topic:'claim_inquiry',secondary_topics:['complaint'],
+   talk_time_ratio:{agent_pct:40,customer_pct:60},
+   call_summary:"David called regarding his £210,000 business interruption claim after a fire at his flagship unit. He has covered staff wages personally for 9 weeks and faces financial hardship. He asked to speak with a director and warned he will pursue legal action if the claim is not approved within 5 business days.",
+   what_to_do:"🔴 URGENT: Raise escalation ticket ESC-4422 with Claims Director before close of business TODAY. Email David confirmation to d.patel@patelretail.co.uk with a 5-business-day resolution commitment. Schedule callback Wednesday 10am — he cannot take unscheduled calls. Note legal intent in the escalation record.",
+   coaching_note:"You handled a very tough call really well — escalating quickly was exactly the right call. ⭐ One thing to build on: personalise your empathy language using the specific details the customer shared (the 9 weeks of wages, the family impact). That extra specificity will really land.",
+   status:'todo',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Good morning, Lightspeed Insurance. Sarah speaking, how can I assist?",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Hi, David Patel, Patel Retail Group. I need to talk about my business interruption claim. Nine weeks and I've heard nothing. I've been paying staff wages myself. This is £210,000.",sentiment:1,emotion:'frustrated',intent:'making_complaint'},
+     {speaker:'AGENT',text:"Mr Patel, I can hear how stressful this has been. Let me access your file immediately. I can see the claim for the retail unit fire — I want to get you a definitive update today.",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"I don't want another update. I want this approved. I've covered wages for nine weeks personally. If I don't have written approval within five business days I'm going to my solicitor.",sentiment:1,emotion:'angry',intent:'threatening_to_leave'},
+     {speaker:'AGENT',text:"I completely understand, Mr Patel. I'm raising a formal escalation right now so this lands on a senior director's desk today. I can also arrange a confirmed callback for Wednesday morning — would 10am work?",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Wednesday 10am is fine. But I want confirmation in writing today that this is escalated. From a director, not a junior handler.",sentiment:2,emotion:'frustrated',intent:'confirming'}
+   ]},
+  {call_id:'CALL-003',agent:'Rajan Nurine',time:'10:30',duration:'11:18',
+   customer_name:'Linda Schwartz',customer_emoji:'💼',business_name:'Schwartz Consulting Ltd',
+   policy_type:'Professional Indemnity',amount:'£45,000',priority:'high',
+   overall_customer_sentiment:2,sentiment_arc:{opening:3,mid_call:2,closing:3},
+   agent_tone_score:4,agent_empathy_score:4,agent_clarity_score:4,
+   escalation_flag:false,churn_risk:'medium',call_outcome:'follow_up_required',
+   primary_topic:'renewal',secondary_topics:['billing'],
+   talk_time_ratio:{agent_pct:50,customer_pct:50},
+   call_summary:"Linda called about her professional indemnity renewal. She has a Hiscox competing quote £800 cheaper for identical cover. As a 6-year customer she values the relationship but needs a loyalty adjustment. She's given Lightspeed until Friday to respond.",
+   what_to_do:"📧 Email Linda a counter-offer by Thursday 5pm to l.schwartz@schwartzconsulting.com. Get team lead approval for a loyalty discount of at least £600. Quote ref: REN-8834. Highlight the legal helpline and cyber extension that Hiscox does not include. She's a 6-year customer — this retention is important.",
+   coaching_note:null,status:'in_progress',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Good morning, Lightspeed Insurance, Sarah speaking.",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Hi Sarah, Linda Schwartz. Calling about my professional indemnity renewal. I've had a Hiscox quote for the same cover — £800 less. Six years with you but I can't just ignore that.",sentiment:2,emotion:'neutral',intent:'making_complaint'},
+     {speaker:'AGENT',text:"Linda, thank you for giving us the chance to respond — I really appreciate your loyalty. Can I ask which cover level Hiscox quoted? I want to make sure we compare like for like.",sentiment:3,emotion:'neutral',intent:'asking_question'},
+     {speaker:'CUSTOMER',text:"Same £1 million limit, retroactive cover included. I'm not sure if they include the legal helpline and cyber extension.",sentiment:2,emotion:'neutral',intent:'providing_info'},
+     {speaker:'AGENT',text:"That's a really important distinction — our policy includes both as standard, which adds around £400 in standalone value. I want to escalate this internally and come back to you with a loyalty offer by Thursday. Is that OK?",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Thursday is fine. I'm not in a rush to leave — I just need you to meet me somewhere reasonable. I do value the service here.",sentiment:3,emotion:'neutral',intent:'confirming'}
+   ]},
+  {call_id:'CALL-004',agent:'Rajan Nurine',time:'11:15',duration:'09:42',
+   customer_name:'Tom Asante',customer_emoji:'🏢',business_name:'Asante Home Care Ltd',
+   policy_type:'Employers Liability',amount:'£12,000',priority:'high',
+   overall_customer_sentiment:2,sentiment_arc:{opening:2,mid_call:2,closing:3},
+   agent_tone_score:4,agent_empathy_score:5,agent_clarity_score:4,
+   escalation_flag:false,churn_risk:'medium',call_outcome:'follow_up_required',
+   primary_topic:'billing',secondary_topics:['policy_change'],
+   talk_time_ratio:{agent_pct:45,customer_pct:55},
+   call_summary:"Tom reported a duplicate direct debit payment for his employers liability premium — a double charge of £1,000 in one month. As a small business owner this has caused a cash-flow issue. Sarah confirmed the error and committed to a refund within 3 business days.",
+   what_to_do:"💳 Submit refund request to billing@lightspeed-ins.com with ref BILL-3391 TODAY. Send Tom a confirmation email to t.asante@asantehomecare.co.uk with the expected refund date. Call him back Wednesday to confirm receipt. Do not let this auto-escalate.",
+   coaching_note:null,status:'in_progress',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Good morning, Lightspeed Insurance, Sarah speaking.",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Hi, Tom Asante from Asante Home Care. I've checked my bank and you've taken two direct debit payments this month — that's a thousand pounds out that shouldn't be there.",sentiment:2,emotion:'frustrated',intent:'making_complaint'},
+     {speaker:'AGENT',text:"Oh Tom, I'm really sorry — a duplicate charge is absolutely not what should have happened. Let me check your billing records right now.",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"I run a small care business — a thousand pounds is not a small amount. I have wages going out on Friday.",sentiment:2,emotion:'frustrated',intent:'making_complaint'},
+     {speaker:'AGENT',text:"I completely understand and I take full responsibility for getting this sorted today. I can see the duplicate — that's definitely our error. I'm raising the refund request now. You'll have it back within 3 business days and I'll personally follow up Wednesday.",sentiment:4,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Three days is fine as long as it actually happens. If you say Wednesday I'll expect a call.",sentiment:3,emotion:'relieved',intent:'confirming'}
+   ]},
+  {call_id:'CALL-005',agent:'Rajan Nurine',time:'13:10',duration:'07:55',
+   customer_name:'Riya Shah',customer_emoji:'🏠',business_name:'Shah Family Trust',
+   policy_type:'High Value Home',amount:'£8,200/yr',priority:'normal',
+   overall_customer_sentiment:5,sentiment_arc:{opening:4,mid_call:5,closing:5},
+   agent_tone_score:5,agent_empathy_score:5,agent_clarity_score:5,
+   escalation_flag:false,churn_risk:'low',call_outcome:'resolved',
+   primary_topic:'policy_change',secondary_topics:['general_inquiry'],
+   talk_time_ratio:{agent_pct:55,customer_pct:45},
+   call_summary:"Riya called to add a £14,500 diamond necklace (inherited, recently appraised) to her high-value home policy as a specified item. Sarah processed the mid-term adjustment, confirmed a £340/yr premium uplift, and sent confirmation documents during the call.",
+   what_to_do:"✅ Confirmation sent. File the appraisal certificate when Riya emails it to valuables@lightspeed-ins.com. Mark resolved.",
+   coaching_note:null,status:'done',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Good afternoon, Lightspeed Insurance, Sarah speaking. How can I help?",sentiment:4,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Hi Sarah, Riya Shah. I need to add a piece of jewellery — a diamond necklace, appraised at £14,500. It's an inheritance from my grandmother.",sentiment:4,emotion:'satisfied',intent:'asking_question'},
+     {speaker:'AGENT',text:"Of course, Riya — what a beautiful piece to inherit. I can add that as a specified item right now. Can you confirm the appraiser's name?",sentiment:5,emotion:'satisfied',intent:'asking_question'},
+     {speaker:'CUSTOMER',text:"Fletcher Valuations. I can email the certificate. How much will it add to my premium?",sentiment:4,emotion:'neutral',intent:'asking_question'},
+     {speaker:'AGENT',text:"The uplift for a £14,500 specified item on your policy is £340 per year. I'll add it mid-term and send the updated schedule now. Just forward the Fletcher certificate to valuables at lightspeed-ins dot co dot uk.",sentiment:5,emotion:'satisfied',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Perfect — so straightforward. Thank you so much. I'll send the certificate today.",sentiment:5,emotion:'satisfied',intent:'confirming'}
+   ]},
+  {call_id:'CALL-006',agent:'Rajan Nurine',time:'14:05',duration:'06:20',
+   customer_name:'Ben Okafor',customer_emoji:'🏢',business_name:'Okafor Logistics Ltd',
+   policy_type:'Fleet Insurance',amount:'£2,400/yr',priority:'normal',
+   overall_customer_sentiment:4,sentiment_arc:{opening:4,mid_call:4,closing:4},
+   agent_tone_score:5,agent_empathy_score:4,agent_clarity_score:5,
+   escalation_flag:false,churn_risk:'low',call_outcome:'resolved',
+   primary_topic:'claim_inquiry',secondary_topics:['general_inquiry'],
+   talk_time_ratio:{agent_pct:60,customer_pct:40},
+   call_summary:"Ben called for a routine update on a minor fleet claim — a rear bumper shunt on a company van. Sarah confirmed the repair is approved at a Lightspeed repairer and the van will be ready Thursday. Courtesy vehicle confirmed until collection.",
+   what_to_do:"✅ Confirm repair completion Thursday and update claim CLM-1102 to closed. Send satisfaction survey link.",
+   coaching_note:null,status:'done',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Good afternoon, Lightspeed Insurance, Sarah here.",sentiment:4,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Hi, Ben Okafor, Okafor Logistics. Update on the fleet claim for the Transit — the rear bumper job.",sentiment:4,emotion:'neutral',intent:'asking_question'},
+     {speaker:'AGENT',text:"Hi Ben! Claim CLM-1102 — repair approved at Jennings Approved Bodywork in Croydon. Van ready Thursday, courtesy vehicle covered until you collect.",sentiment:5,emotion:'satisfied',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Thursday works. And there's no excess since it was third-party fault, right?",sentiment:4,emotion:'neutral',intent:'asking_question'},
+     {speaker:'AGENT',text:"Correct — liability recovery confirmed, zero excess on your side. You're all clear, Ben.",sentiment:5,emotion:'satisfied',intent:'providing_info'}
+   ]},
+  {call_id:'CALL-007',agent:'Rajan Nurine',time:'09:10',duration:'12:45',
+   customer_name:'Helen Hargreaves',customer_emoji:'🏢',business_name:'Hargreaves Manufacturing',
+   policy_type:'Employers Liability',amount:'£15,000',priority:'high',
+   overall_customer_sentiment:2,sentiment_arc:{opening:3,mid_call:2,closing:2},
+   agent_tone_score:2,agent_empathy_score:2,agent_clarity_score:3,
+   escalation_flag:false,churn_risk:'medium',call_outcome:'unresolved',
+   primary_topic:'policy_change',secondary_topics:['billing'],
+   talk_time_ratio:{agent_pct:70,customer_pct:30},
+   call_summary:"Helen called to add 12 temporary workers to her employers liability. The effective date was explained incorrectly and Helen left the call uncertain whether her new workers are currently covered. Potential coverage gap — requires immediate callback.",
+   what_to_do:"⚠️ URGENT: Call Helen back immediately on 07700 900871. Confirm the correct effective date with your team lead BEFORE calling. Issue a written coverage confirmation letter. Do not let this sit — an uncovered claim is a major liability.",
+   coaching_note:"You stayed calm in an ambiguous situation — that's a real strength. 🌟 For your next policy change call, try a quick system-confirm before giving effective dates — it turns a 'probably' into a definite, and customers love that certainty. You've got this!",
+   status:'todo',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Lightspeed Insurance, Sarah speaking.",sentiment:3,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Hi, Helen Hargreaves, Hargreaves Manufacturing. I need to add 12 temporary workers to my employers liability. When would that take effect?",sentiment:3,emotion:'neutral',intent:'asking_question'},
+     {speaker:'AGENT',text:"Right, so a mid-term adjustment usually takes five to seven working days so they'd be on from next week probably.",sentiment:2,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Probably? These workers start Monday. Are they covered from Monday or not? I need a definitive answer.",sentiment:2,emotion:'frustrated',intent:'asking_question'},
+     {speaker:'AGENT',text:"The system should backdate it to today's request date, so they should be fine, I think.",sentiment:2,emotion:'neutral',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"I think? I need certainty, not I think. Can you send me something in writing confirming they're covered from Monday?",sentiment:2,emotion:'frustrated',intent:'asking_question'}
+   ]},
+  {call_id:'CALL-008',agent:'Rajan Nurine',time:'11:45',duration:'10:12',
+   customer_name:'Arun Mehta',customer_emoji:'🏢',business_name:'Mehta Property Ltd',
+   policy_type:'Commercial Property',amount:'£67,000',priority:'normal',
+   overall_customer_sentiment:5,sentiment_arc:{opening:4,mid_call:5,closing:5},
+   agent_tone_score:5,agent_empathy_score:5,agent_clarity_score:5,
+   escalation_flag:false,churn_risk:'low',call_outcome:'resolved',
+   primary_topic:'renewal',secondary_topics:['general_inquiry'],
+   talk_time_ratio:{agent_pct:58,customer_pct:42},
+   call_summary:"Arun called to renew his commercial property portfolio. Sarah proactively identified a terrorism cover gap and explained the risk clearly. Arun agreed to add the extension (+£420/yr) and praised the quality of advice. He also referred two other property owners.",
+   what_to_do:"✅ Renewal processed. Log the two referrals from Arun and email the referral welcome pack to arun.mehta@mehtaproperty.co.uk. No further action on this call.",
+   coaching_note:null,status:'done',
+   speaker_turns:[
+     {speaker:'AGENT',text:"Good morning, Lightspeed Insurance. Sarah speaking — how can I help?",sentiment:5,emotion:'satisfied',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"Hi Sarah, Arun Mehta. Calling to renew the commercial property policy on my four retail units.",sentiment:4,emotion:'neutral',intent:'confirming'},
+     {speaker:'AGENT',text:"Wonderful — I have your portfolio here. Before we renew, I noticed you don't have a terrorism extension. Given two of your units are in central Manchester, I'd really recommend we discuss adding that.",sentiment:5,emotion:'satisfied',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"I didn't realise that wasn't included. How much would it add?",sentiment:4,emotion:'neutral',intent:'asking_question'},
+     {speaker:'AGENT',text:"It adds £420 to your annual premium — very modest for four city-centre units at £67,000 insured value. I can walk you through exactly what it covers if helpful.",sentiment:5,emotion:'satisfied',intent:'providing_info'},
+     {speaker:'CUSTOMER',text:"No, that makes complete sense. Please add it. Honestly the best insurance advice I've had in years. I've got two other property owners I should send your way.",sentiment:5,emotion:'satisfied',intent:'confirming'}
+   ]}
+];
+
+// ─── BACKEND CONFIG ─────────────────────────────────────────────────────────
+// Point this at your running FastAPI server.  Leave empty to use demo data only.
+const API_BASE_URL = '';   // e.g. 'http://localhost:8000'
+
+let backendConnected = false;   // updated by probeBackend()
+
+async function probeBackend() {
+  if (!API_BASE_URL) return;
+  try {
+    const r = await fetch(`${API_BASE_URL}/health`, { signal: AbortSignal.timeout(2500) });
+    backendConnected = r.ok;
+  } catch { backendConnected = false; }
+  updateBackendIndicator();
+}
+
+function updateBackendIndicator() {
+  const el = document.getElementById('backend-indicator');
+  if (!el) return;
+  if (!API_BASE_URL) {
+    el.innerHTML = '<span class="be-dot be-demo"></span>Demo data';
+    el.title = 'No backend configured — using built-in demo calls';
+  } else if (backendConnected) {
+    el.innerHTML = '<span class="be-dot be-live"></span>Live';
+    el.title = `Connected to ${API_BASE_URL}`;
+  } else {
+    el.innerHTML = '<span class="be-dot be-offline"></span>Offline';
+    el.title = `Cannot reach ${API_BASE_URL} — using demo data`;
+  }
+}
+
+// Fetch calls from backend (returns null to signal fallback to demo data)
+async function fetchCallsFromBackend(agentId) {
+  if (!API_BASE_URL || !backendConnected) return null;
+  try {
+    const url = `${API_BASE_URL}/api/calls?agent_id=${encodeURIComponent(agentId)}&limit=200`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) return null;
+    const data = await r.json();
+    // Normalise backend schema → frontend CALLS schema
+    return data.calls.map(c => ({
+      call_id: c.id,
+      customer_name: c.customer_name || 'Unknown',
+      business_name: c.business_name || '',
+      customer_phone: c.customer_phone || '',
+      primary_topic: c.primary_topic || 'general_enquiry',
+      call_outcome: c.call_outcome || 'unresolved',
+      priority: c.priority || 'medium',
+      churn_risk: c.churn_risk || 'medium',
+      status: c.action_status || 'pending',
+      duration: Math.round((c.duration_seconds || 0) / 60) + 'm',
+      agent_tone_score: c.agent_tone_score || 3,
+      agent_empathy_score: c.agent_empathy_score || 3,
+      agent_clarity_score: c.agent_clarity_score || 3,
+      overall_customer_sentiment: c.overall_customer_sentiment || 3,
+      agent_talk_pct: Math.round((c.agent_talk_ratio || 0.5) * 100),
+      customer_talk_pct: 100 - Math.round((c.agent_talk_ratio || 0.5) * 100),
+      first_call_resolution: !!c.first_call_resolution,
+      policy_number: c.policy_number || '',
+      claim_number: c.claim_number || '',
+      amount_disputed: c.amount_disputed || '',
+      summary: c.summary || '',
+      coaching_note: c.coaching_note || '',
+      turns: c.turns || [],
+    }));
+  } catch { return null; }
+}
+
+// Update a call's status on the backend (fire-and-forget)
+async function updateCallStatusAPI(callId, newStatus) {
+  if (!API_BASE_URL || !backendConnected) return;
+  try {
+    await fetch(`${API_BASE_URL}/api/calls/${callId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action_status: newStatus }),
+      signal: AbortSignal.timeout(3000),
+    });
+  } catch { /* silent — local state already updated */ }
+}
+
+// ─── STATE ─────────────────────────────────────────────────────────────────
+const STATE = {
+  view:'action-board',
+  statuses:{},
+  filter:'all',
+  range:'today',
+  dashTopic:'all',
+  allChurn:'all',
+  charts:{},
+  currentAgent: AGENTS[0].id,
+  liveCalls: null,   // null = not yet fetched, [] = backend returned empty
+};
+CALLS.forEach(c=>{ STATE.statuses[c.call_id]=c.status; });
+
+// Returns backend calls if available, otherwise demo CALLS constant
+function getActiveCalls() {
+  return (STATE.liveCalls && STATE.liveCalls.length) ? STATE.liveCalls : CALLS;
+}
+
+// ─── HELPERS ───────────────────────────────────────────────────────────────
+function sentimentEmoji(v){return v<=1?'😡':v===2?'😟':v===3?'😐':v===4?'🙂':'😄';}
+function topicLabel(t){
+  const m={claim_inquiry:'Claim Inquiry',policy_change:'Policy Change',billing:'Billing',renewal:'Renewal',complaint:'Complaint',general_inquiry:'General',cancellation_request:'Cancellation'};
+  return m[t]||t;
+}
+function churnLabel(r){return r==='high'?'🔴 High Churn':r==='medium'?'🟡 Churn Risk':'';}
+function destroyCharts(){Object.keys(STATE.charts).forEach(k=>{STATE.charts[k].destroy();delete STATE.charts[k];});}
+function chartColor(hex,alpha=1){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return `rgba(${r},${g},${b},${alpha})`;}
+function isLight(){return document.documentElement.classList.contains('light');}
+function chartDefaults(){
+  return {
+    gridColor: isLight()?'rgba(0,0,0,0.06)':'rgba(255,255,255,0.04)',
+    tickColor: isLight()?'#64748b':'#8b949e',
+    legendColor: isLight()?'#64748b':'#8b949e'
+  };
+}
+function getFiltered(){
+  return getActiveCalls().filter(c=>{
+    const s=STATE.statuses[c.call_id];
+    if(STATE.filter==='urgent') return c.priority==='urgent';
+    if(STATE.filter==='high') return c.priority==='high';
+    if(STATE.filter==='todo') return s==='todo';
+    if(STATE.filter==='in_progress') return s==='in_progress';
+    if(STATE.filter==='done') return s==='done';
+    return true;
+  });
+}
+function getPriority(c){return c.priority==='urgent'?0:c.priority==='high'?1:2;}
+function countStatus(st){return getActiveCalls().filter(c=>STATE.statuses[c.call_id]===st).length;}
+
+// ─── RANGE / REPORT ────────────────────────────────────────────────────────
+function setRange(el,range){
+  STATE.range=range;
+  document.querySelectorAll('.range-pill[data-range]').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  destroyCharts();
+  renderView();
+}
+function downloadReport(){
+  const pd=PERIOD_DATA[STATE.range];
+  const lines=[
+    `LIGHTSPEED CALL INTELLIGENCE — ${pd.label.toUpperCase()} REPORT`,
+    `Period: ${pd.dateStr}`,`Generated: ${new Date().toLocaleString('en-GB')}`,``,
+    `SUMMARY`,`Total Calls: ${pd.calls}`,`Avg Sentiment: ${pd.avgSent}/5`,
+    `Resolution Rate: ${Math.round((pd.resolved/pd.calls)*100)}% (${pd.resolved} resolved)`,
+    `Escalations: ${pd.escalations}`,`High Churn Risk: ${pd.churnHigh}`,``,
+    `AGENT SCORES (Sarah M.)`,`Tone: ${pd.tone}/5`,`Empathy: ${pd.empathy}/5`,`Clarity: ${pd.clarity}/5`,
+    `Notes Issued: ${pd.coachingNotes}`,``,
+    pd.topTopics?`TOP TOPICS\n${Object.entries(pd.topTopics).map(([k,v])=>`  ${k}: ${v} calls`).join('\n')}`:'',``,
+    `--- END OF REPORT ---`
+  ];
+  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`LCI_Report_${pd.label.replace(/\s/g,'_')}.txt`;a.click();
+}
+function refreshView(){destroyCharts();renderView();}
+
+// ─── SKELETON LOADER ─────────────────────────────────────────────────────────
+function showSkeleton(count=3){
+  const cards=Array.from({length:count},()=>`
+    <div class="skeleton-card">
+      <div style="display:flex;gap:12px;margin-bottom:14px">
+        <div class="skeleton" style="width:44px;height:44px;border-radius:50%;flex-shrink:0"></div>
+        <div style="flex:1"><div class="skeleton skel-line w-60"></div><div class="skeleton skel-line w-40"></div></div>
+        <div class="skeleton" style="width:70px;height:24px;border-radius:20px"></div>
+      </div>
+      <div class="skeleton skel-line w-80"></div>
+      <div class="skeleton skel-line w-60"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <div class="skeleton skel-bar" style="width:60px"></div>
+        <div class="skeleton skel-bar" style="width:80px"></div>
+        <div class="skeleton skel-bar" style="width:50px"></div>
+      </div>
+    </div>`).join('');
+  document.getElementById('view-content').innerHTML=`<div class="fade-in">${cards}</div>`;
+}
+
+// ─── NAVIGATION ─────────────────────────────────────────────────────────────
+function navigate(el,view){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navEl=document.querySelector(`[data-view="${view}"]`);
+  if(navEl) navEl.classList.add('active');
+  STATE.view=view;
+  const titles={'action-board':'My Action Board','performance':'My Performance','dashboard':'Dashboard','all-calls':'All Calls','agent-scores':'Agent Scores','upload':'Upload Batch','settings':'Settings'};
+  document.getElementById('page-title').textContent=titles[view]||view;
+  destroyCharts();
+  // Brief skeleton flash for heavier views
+  if(['dashboard','performance','agent-scores'].includes(view)){
+    showSkeleton(4);
+    requestAnimationFrame(()=>requestAnimationFrame(renderView));
+  } else {
+    renderView();
+  }
+  closeSidebar();
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ─── CALL CARD ──────────────────────────────────────────────────────────────
+function renderCallCard(c){
+  const status=STATE.statuses[c.call_id];
+  const arc=c.sentiment_arc;
+  // Customer avatar
+  const initials=(c.customer_name||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const avatarColor=c.priority==='urgent'?'linear-gradient(135deg,#f46f6f,#ec4899)':c.priority==='high'?'linear-gradient(135deg,#f59e0b,#f97316)':'linear-gradient(135deg,#5b8def,#a78bfa)';
+  // Badges
+  const urgencyDot=c.priority==='urgent'?`<span class="badge badge-urgent">🔴 Urgent</span>`:c.priority==='high'?`<span class="badge badge-high">🟡 High</span>`:`<span class="badge badge-normal">🟢 Normal</span>`;
+  const churn=c.churn_risk!=='low'?`<span class="badge ${c.churn_risk==='high'?'badge-churn-high':'badge-churn-med'}">${churnLabel(c.churn_risk)}</span>`:'';
+  const esc=c.escalation_flag?`<span class="badge badge-escalated">⚡ Escalated</span>`:'';
+  // Score pills
+  const scorePill=(ico,val,color,bg)=>`<span class="score-pill" style="background:${bg};border-color:${color}30;color:${color}">${ico} <span class="spval">${val}</span></span>`;
+  const scorePills=`<div class="score-pills">
+    ${scorePill('🎵',c.agent_tone_score,'#5b8def','rgba(91,141,239,0.10)')}
+    ${scorePill('💙',c.agent_empathy_score,'#a78bfa','rgba(167,139,250,0.10)')}
+    ${scorePill('💎',c.agent_clarity_score,'#10e8a0','rgba(16,232,160,0.08)')}
+    ${scorePill('😊',c.overall_customer_sentiment,'#f59e0b','rgba(245,158,11,0.08)')}
+  </div>`;
+  // Talk ratio
+  const agP=c.agent_talk_pct||50;const cuP=100-agP;
+  const talkBar=`<div style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">
+      <span>🎙️ Agent ${agP}%</span><span>👤 Customer ${cuP}%</span></div>
+    <div class="talk-ratio-bar">
+      <div class="talk-ratio-agent" style="width:${agP}%"></div>
+      <div class="talk-ratio-cust" style="width:${cuP}%"></div>
+    </div>
+  </div>`;
+  // Turns
+  const turns=c.speaker_turns.map(t=>`
+    <div class="turn-item">
+      <span class="turn-speaker ${t.speaker==='AGENT'?'speaker-agent':'speaker-customer'}">${t.speaker}</span>
+      <div class="turn-content">
+        <div class="turn-text">${t.text}</div>
+        <div class="turn-meta">
+          <span class="turn-badge">${sentimentEmoji(t.sentiment)} ${t.sentiment}/5</span>
+          <span class="turn-badge">😐 ${t.emotion}</span>
+          <span class="turn-badge">💬 ${t.intent.replace(/_/g,' ')}</span>
+        </div>
+      </div>
+    </div>`).join('');
+  // Status bar color
+  const sbColor=status==='done'?'var(--green)':status==='in_progress'?'var(--amber)':'var(--muted)';
+  return `<div class="call-card ${c.priority} fade-in" id="card-${c.call_id}" style="position:relative">
+    ${status==='done'?`<div style="position:absolute;top:12px;right:14px;font-size:11px;font-weight:700;color:var(--green);background:rgba(16,232,160,0.1);border:1px solid rgba(16,232,160,0.2);padding:2px 10px;border-radius:20px;z-index:1">✅ Done</div>`:''}
+    <div class="card-body">
+      <div class="card-top" style="align-items:center">
+        <div class="customer-avatar" style="background:${avatarColor};margin-right:12px">${initials}</div>
+        <div class="card-top-left">
+          <div class="customer-line" style="margin-bottom:2px">
+            <span class="customer-name">${c.customer_name}</span>
+          </div>
+          <div class="business-name">${c.business_name} · <span class="policy-amount">${c.amount}</span></div>
+        </div>
+        <div class="card-top-right">
+          <div class="call-meta">${c.time} · ${c.duration}</div>
+          <div class="call-meta">${c.policy_type}</div>
+        </div>
+      </div>
+      <div class="badges-row" style="margin-top:10px">${urgencyDot}<span class="badge badge-topic">${topicLabel(c.primary_topic)}</span>${churn}${esc}</div>
+      ${scorePills}
+      ${talkBar}
+      <div class="call-summary">${c.call_summary}</div>
+      <div class="what-to-do"><div class="what-to-do-label">What to do</div><div class="what-to-do-text">${c.what_to_do}</div></div>
+      <div class="sentiment-row">
+        <div class="sentiment-arc">
+          <span class="arc-label">Sentiment:</span>
+          <div class="arc-sq sentiment-${arc.opening}">${arc.opening}</div>
+          <span class="arc-arrow">→</span>
+          <div class="arc-sq sentiment-${arc.mid_call}">${arc.mid_call}</div>
+          <span class="arc-arrow">→</span>
+          <div class="arc-sq sentiment-${arc.closing}">${arc.closing}</div>
+          <span class="overall-score">${sentimentEmoji(c.overall_customer_sentiment)}</span>
+        </div>
+      </div>
+      <div class="status-btns">
+        <button class="status-btn ${status==='todo'?'active-todo':''}" onclick="updateStatus('${c.call_id}','todo')">📋 To do</button>
+        <button class="status-btn ${status==='in_progress'?'active-inprogress':''}" onclick="updateStatus('${c.call_id}','in_progress')">⏳ In Progress</button>
+        <button class="status-btn ${status==='done'?'active-done':''}" onclick="updateStatus('${c.call_id}','done')">✅ Done</button>
+        <button class="turns-btn" onclick="toggleTurns('${c.call_id}')">🗒️ Transcript</button>
+      </div>
+    </div>
+    <div class="turns-section" id="turns-${c.call_id}">${turns}</div>
+  </div>`;
+}
+
+function updateStatus(id,status){
+  STATE.statuses[id]=status;
+  const card=document.getElementById(`card-${id}`);
+  const callObj=getActiveCalls().find(x=>x.call_id===id);
+  if(card&&callObj){const tmp=document.createElement('div');tmp.innerHTML=renderCallCard(callObj);card.replaceWith(tmp.firstElementChild);}
+  updateCallStatusAPI(id, status);
+  updateProgressBar();updateUrgentBadge();
+  const msgs={todo:'📋 Marked as To Do',in_progress:'⏳ In Progress',done:'✅ Marked as Done'};
+  const types={todo:'info',in_progress:'warning',done:'success'};
+  const name=callObj?callObj.customer_name.split(' ')[0]:'Call';
+  showToast(`${name}: ${msgs[status]||status}`, types[status]||'info');
+}
+function toggleTurns(id){const el=document.getElementById(`turns-${id}`);if(el)el.classList.toggle('open');}
+function updateProgressBar(){
+  const ac=getActiveCalls();
+  const done=countStatus('done');const total=ac.length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  const bar=document.getElementById('progress-fill');if(bar)bar.style.width=pct+'%';
+  const lbl=document.getElementById('progress-label');if(lbl)lbl.textContent=`${done} of ${total} calls actioned`;
+  ['todo','inp','done','urg'].forEach(k=>{
+    const el=document.getElementById(`count-${k}`);
+    if(el) el.textContent=k==='todo'?countStatus('todo'):k==='inp'?countStatus('in_progress'):k==='done'?countStatus('done'):ac.filter(c=>c.priority==='urgent').length;
+  });
+}
+function updateUrgentBadge(){
+  const ub=document.getElementById('urgent-badge');
+  if(ub) ub.textContent=getActiveCalls().filter(c=>c.priority==='urgent'&&STATE.statuses[c.call_id]!=='done').length;
+}
+
+// ─── PERIOD BANNER ─────────────────────────────────────────────────────────
+function periodBanner(){
+  if(STATE.range==='today') return '';
+  const pd=PERIOD_DATA[STATE.range];
+  return `<div class="alert-banner amber" style="margin-bottom:20px">
+    <span class="alert-icon">📅</span>
+    <div class="alert-content">
+      <div class="alert-title">Viewing: ${pd.label} — ${pd.dateStr}</div>
+      <ul class="alert-items"><li>This view shows historical data for the selected period. <span>Switch to "Today" to action live calls.</span></li></ul>
+    </div>
+  </div>`;
+}
+
+// ─── VIEW: REPORT (non-today) ───────────────────────────────────────────────
+function renderPeriodReport(){
+  const pd=PERIOD_DATA[STATE.range];
+  const resRate=Math.round((pd.resolved/pd.calls)*100);
+  const scoreColor=v=>v>=4.5?'var(--green)':v>=3?'var(--blue)':'var(--amber)';
+  const topicsHTML=pd.topTopics?Object.entries(pd.topTopics).map(([k,v])=>`
+    <div class="history-call-row">
+      <span class="badge badge-topic">${k}</span>
+      <div style="flex:1;margin-left:10px">
+        <div style="background:var(--bar-bg);border-radius:4px;height:6px;overflow:hidden">
+          <div style="height:6px;background:var(--blue);border-radius:4px;width:${Math.round((v/pd.calls)*100)}%"></div>
+        </div>
+      </div>
+      <span style="font-size:13px;font-weight:600;min-width:30px;text-align:right">${v}</span>
+    </div>`).join(''):'';
+  const historyCallsHTML=pd.historyCalls?pd.historyCalls.map(c=>`
+    <div class="history-call-row">
+      <div class="priority-dot" style="background:${c.churn==='high'?'var(--red)':c.churn==='medium'?'var(--amber)':'var(--green)'}"></div>
+      <div class="history-call-info">
+        <div class="history-call-name">${c.name} · ${c.company}</div>
+        <div class="history-call-meta">${c.topic} · ${c.amount} · ${c.outcome.replace(/_/g,' ')}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${c.summary}</div>
+      </div>
+      <span style="font-size:16px">${sentimentEmoji(c.sent)}</span>
+    </div>`).join(''):'';
+  const dailyChartHTML=pd.dailyAvg?`
+    <div class="chart-card" style="margin-bottom:20px">
+      <div class="chart-title">Daily Avg Sentiment — ${pd.label}</div>
+      <div class="chart-wrap"><canvas id="chart-period-daily"></canvas></div>
+    </div>`:'';
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in">
+      ${periodBanner()}
+      <div class="report-card">
+        <div class="report-header">
+          <div><div class="report-title">📊 ${pd.label} Report</div><div class="report-period">${pd.dateStr}</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="downloadReport()">📄 Export .txt</button>
+        </div>
+        <div class="report-grid">
+          <div class="report-metric"><div class="report-metric-val" style="color:var(--blue)">${pd.calls}</div><div class="report-metric-label">Total Calls</div></div>
+          <div class="report-metric"><div class="report-metric-val" style="color:${scoreColor(pd.avgSent)}">${pd.avgSent}</div><div class="report-metric-label">Avg Sentiment</div></div>
+          <div class="report-metric"><div class="report-metric-val" style="color:var(--green)">${resRate}%</div><div class="report-metric-label">Resolution Rate</div></div>
+          <div class="report-metric"><div class="report-metric-val" style="color:var(--red)">${pd.escalations}</div><div class="report-metric-label">Escalations</div></div>
+          <div class="report-metric"><div class="report-metric-val" style="color:var(--amber)">${pd.churnHigh}</div><div class="report-metric-label">High Churn</div></div>
+          <div class="report-metric"><div class="report-metric-val" style="color:var(--purple)">${pd.coachingNotes}</div><div class="report-metric-label">Notes</div></div>
+        </div>
+        <div class="report-section-title">Agent Scores — Sarah M.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+          ${[['🎵','Tone',pd.tone],['💙','Empathy',pd.empathy],['💎','Clarity',pd.clarity]].map(([ico,lbl,val])=>`
+          <div style="text-align:center;padding:14px;background:var(--card2);border-radius:10px;border:1px solid var(--border)">
+            <div style="font-size:18px;margin-bottom:4px">${ico}</div>
+            <div style="font-size:22px;font-weight:700;color:${scoreColor(val)}">${val}</div>
+            <div style="font-size:11px;color:var(--muted)">${lbl}</div>
+          </div>`).join('')}
+        </div>
+        ${pd.topTopics?`<div class="report-section-title">Calls by Topic</div><div style="margin-bottom:20px">${topicsHTML}</div>`:''}
+        ${pd.historyCalls?`<div class="report-section-title">Call Detail</div>${historyCallsHTML}`:''}
+      </div>
+      ${dailyChartHTML}
+    </div>`;
+  if(pd.dailyAvg){
+    setTimeout(()=>{
+      const {gridColor,tickColor,legendColor}=chartDefaults();
+      const labels=STATE.range==='monthly'
+        ?pd.dailyAvg.map((_,i)=>`${i+1} Mar`)
+        :['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].slice(0,pd.dailyAvg.length);
+      STATE.charts.periodDaily=new Chart(document.getElementById('chart-period-daily'),{
+        type:'line',data:{labels,datasets:[{label:'Avg Sentiment',data:pd.dailyAvg,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#4f8ef7',pointRadius:4}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:legendColor,font:{family:'DM Sans'}}}},scales:{x:{grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans'}}},y:{min:2.5,max:4.5,grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans'}}}}}
+      });
+    },50);
+  }
+}
+
+// ─── VIEW: ACTION BOARD ─────────────────────────────────────────────────────
+function renderActionBoard(){
+  const ac=getActiveCalls();
+  const done=countStatus('done');const total=ac.length;const pct=Math.round((done/total)*100);
+  const alertItems=[
+    ...ac.filter(c=>c.priority==='urgent').map(c=>`<li>🔴 <span>${c.customer_name}</span> (${c.business_name}) — ${topicLabel(c.primary_topic)} — High churn risk</li>`),
+    ...ac.filter(c=>c.call_outcome==='unresolved'&&c.priority!=='urgent').map(c=>`<li>⏳ <span>${c.customer_name}</span> — Unresolved call, follow-up required</li>`),
+    ...ac.filter(c=>c.agent_tone_score<=2).map(c=>`<li>💡 Growth opportunity on <span>${c.customer_name}</span> call — see your Notes section</li>`)
+  ];
+  const filtered=getFiltered().sort((a,b)=>getPriority(a)-getPriority(b));
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div><div style="font-size:20px;font-weight:700;margin-bottom:2px">👋 Good morning, ${getCurrentAgent().name.split(' ')[0]}! 🌟</div>
+        <div style="font-size:13px;color:var(--muted)">${TODAY_STR}</div></div>
+      </div>
+      ${(()=>{const d=countStatus('done');const t=getActiveCalls().length;const pct=Math.round((d/t)*100);
+        const msgs=[
+          {cond:pct===100,bg:'var(--green)',ico:'🏆',msg:`Incredible — all ${t} calls actioned today! You're on fire, ${getCurrentAgent().name.split(' ')[0]}. 🎉`},
+          {cond:pct>=75,bg:'var(--blue)',ico:'⭐',msg:`You're killing it today — ${d} of ${t} calls done already! Keep that energy going!`},
+          {cond:pct>=50,bg:'var(--purple)',ico:'💪',msg:`Halfway there! ${d} down, ${t-d} to go. You're making a real difference to every customer.`},
+          {cond:true,bg:'var(--amber)',ico:'☀️',msg:`You've got this, ${getCurrentAgent().name.split(' ')[0]}! Every call you handle makes someone's day easier. Let's go!`}
+        ];
+        const m=msgs.find(x=>x.cond);
+        const grBg=pct===100?'linear-gradient(90deg,rgba(16,232,160,0.1),rgba(34,211,238,0.06))':pct>=75?'linear-gradient(90deg,rgba(91,141,239,0.1),rgba(167,139,250,0.06))':pct>=50?'linear-gradient(90deg,rgba(167,139,250,0.1),rgba(91,141,239,0.06))':'linear-gradient(90deg,rgba(245,158,11,0.09),rgba(249,115,22,0.04))';
+        const grBdr=pct===100?'rgba(16,232,160,0.25)':pct>=75?'rgba(91,141,239,0.25)':pct>=50?'rgba(167,139,250,0.25)':'rgba(245,158,11,0.22)';
+        return `<div style="background:${grBg};border:1px solid ${grBdr};border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">${m.ico}</span>
+          <span style="font-size:13px;font-weight:600;color:var(--text);line-height:1.5">${m.msg}</span>
+        </div>`;
+      })()}
+      ${alertItems.length?`<div class="alert-banner red">
+        <span class="alert-icon">🚨</span>
+        <div class="alert-content">
+          <div class="alert-title">Action Required</div>
+          <ul class="alert-items">${alertItems.join('')}</ul>
+        </div>
+      </div>`:''}
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-title" id="progress-label">${done} of ${total} calls actioned</span>
+          <div class="progress-counts">
+            <span class="count-pill"><span class="dot" style="background:var(--muted)"></span>To do: <strong id="count-todo">${countStatus('todo')}</strong></span>
+            <span class="count-pill"><span class="dot" style="background:var(--amber)"></span>In progress: <strong id="count-inp">${countStatus('in_progress')}</strong></span>
+            <span class="count-pill"><span class="dot" style="background:var(--green)"></span>Done: <strong id="count-done">${done}</strong></span>
+            <span class="count-pill"><span class="dot" style="background:var(--red)"></span>Urgent: <strong id="count-urg">${ac.filter(c=>c.priority==='urgent').length}</strong></span>
+          </div>
+        </div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="filter-pills">
+        ${['all','urgent','high','todo','in_progress','done'].map(f=>`<button class="pill ${f==='urgent'?'urgent':''} ${STATE.filter===f?'active':''}" onclick="setFilter('${f}')">${f==='all'?'All':f==='in_progress'?'In Progress':f[0].toUpperCase()+f.slice(1)}</button>`).join('')}
+      </div>
+      <div class="calls-list">${filtered.length?filtered.map((c,i)=>`<div class="stagger-item" style="animation-delay:${i*40}ms">${renderCallCard(c)}</div>`).join(''):`<div class="empty-state"><div class="empty-icon">✅</div><div>No calls match this filter</div></div>`}</div>
+    </div>`;
+}
+function setFilter(f){STATE.filter=f;renderActionBoard();}
+
+// ─── VIEW: MY PERFORMANCE ───────────────────────────────────────────────────
+function renderPerformance(){
+  const agent=getCurrentAgent();
+  const hist=getAgentHistory();
+  const today=hist[hist.length-1];
+  const avg=getPerfAvg();
+  const calls=getActiveCalls().filter(c=>c.agent===agent.name||AGENTS.length===1);
+  const resolved=calls.filter(c=>c.call_outcome==='resolved').length;
+  const total=calls.length||1;
+  const resRate=Math.round((resolved/total)*100);
+  const fcr=Math.round(calls.filter(c=>c.call_outcome==='resolved').length/total*100);
+  const avgDur=Math.round(calls.reduce((s,c)=>{const p=c.duration.split(':');return s+parseInt(p[0])*60+parseInt(p[1]);},0)/total/60*10)/10;
+  const highChurnCalls=calls.filter(c=>c.churn_risk==='high'||c.churn_risk==='medium');
+  const churnPrev=highChurnCalls.length>0?Math.round(highChurnCalls.filter(c=>c.overall_customer_sentiment>=3).length/highChurnCalls.length*100):100;
+  const escRate=Math.round(calls.filter(c=>c.escalation_flag).length/total*100);
+  const talkRatios=calls.map(c=>c.talk_time_ratio.agent_pct);
+  const avgTalkBal=100-Math.abs(50-Math.round(talkRatios.reduce((a,b)=>a+b,0)/talkRatios.length));
+  const overallScore=Math.round((today.tone+today.empathy+today.clarity)/3*20);
+  const noteCalls=calls.filter(c=>c.coaching_note);
+  const topicCounts={};calls.forEach(c=>{topicCounts[c.primary_topic]=(topicCounts[c.primary_topic]||0)+1;});
+  const delta=(a,b)=>{const d=(a-b).toFixed(1);return {d,cls:parseFloat(d)>0?'delta-up':parseFloat(d)<0?'delta-down':'delta-flat',icon:parseFloat(d)>0?'↑':parseFloat(d)<0?'↓':'→'};}
+  const dT=delta(today.tone,avg.tone),dE=delta(today.empathy,avg.empathy),dC=delta(today.clarity,avg.clarity);
+  // Motivational banner
+  const motiveBanners=[
+    {cond:overallScore>=80,msg:`🏆 Outstanding performance today, ${agent.name.split(' ')[0]}! You're in the top tier — keep it up!`,col:'var(--green)'},
+    {cond:overallScore>=65,msg:`⭐ Great work today, ${agent.name.split(' ')[0]}! Your scores are trending upward — you're building real momentum.`,col:'var(--blue)'},
+    {cond:resRate>=50,msg:`✅ Good resolution rate today! Every call you close confidently makes a real difference to customers.`,col:'var(--purple)'},
+    {cond:true,msg:`💪 You're doing a great job, ${agent.name.split(' ')[0]}. Every call is an opportunity to grow — keep going!`,col:'var(--amber)'}
+  ];
+  const banner=motiveBanners.find(b=>b.cond);
+  // KPI definitions
+  const kpis=[
+    {icon:'🎵',label:'Tone',value:today.tone.toFixed(1),max:5,unit:'/5',color:'#4f8ef7',delta:dT,tip:'How warm and professional your voice came across'},
+    {icon:'💙',label:'Empathy',value:today.empathy.toFixed(1),max:5,unit:'/5',color:'#a78bfa',delta:dE,tip:'How well you connected with the customer emotionally'},
+    {icon:'💎',label:'Clarity',value:today.clarity.toFixed(1),max:5,unit:'/5',color:'#34d399',delta:dC,tip:'How clearly you explained information and next steps'},
+    {icon:'✅',label:'Resolution Rate',value:resRate+'%',max:100,unit:'',color:'#34d399',delta:{d:'+5',cls:'delta-up',icon:'↑'},tip:'Percentage of today\'s calls fully resolved'},
+    {icon:'🎯',label:'First Call Resolution',value:fcr+'%',max:100,unit:'',color:'#fbbf24',delta:{d:'+3',cls:'delta-up',icon:'↑'},tip:'Calls resolved without any follow-up needed'},
+    {icon:'🗣️',label:'Talk Balance',value:avgTalkBal+'%',max:100,unit:'',color:'#22d3ee',delta:{d:'+2',cls:'delta-up',icon:'↑'},tip:'How balanced agent/customer talk time is (higher = more balanced)'},
+    {icon:'🛡️',label:'Churn Prevention',value:churnPrev+'%',max:100,unit:'',color:'#a78bfa',delta:{d:'+8',cls:'delta-up',icon:'↑'},tip:'At-risk customers who ended the call positively'},
+    {icon:'📉',label:'Escalation Rate',value:escRate+'%',max:100,unit:'',color:'#f87171',delta:{d:'-2',cls:'delta-up',icon:'↓'},tip:'Lower is better — fewer calls needed escalation'},
+    {icon:'⏱️',label:'Avg Call Duration',value:avgDur+'m',max:20,unit:'',color:'#fb923c',delta:{d:'-0.5',cls:'delta-up',icon:'↓'},tip:'Average minutes per call (lower = more efficient)'},
+  ];
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in">
+      <!-- Motivational banner -->
+      <div style="background:rgba(${banner.col==='var(--green)'?'52,211,153':banner.col==='var(--blue)'?'79,142,247':banner.col==='var(--purple)'?'167,139,250':'251,191,36'},0.1);border:1px solid rgba(${banner.col==='var(--green)'?'52,211,153':banner.col==='var(--blue)'?'79,142,247':banner.col==='var(--purple)'?'167,139,250':'251,191,36'},0.3);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+        <div style="flex:1;font-size:14px;font-weight:500;color:var(--text)">${banner.msg}</div>
+        <div style="text-align:center;flex-shrink:0">
+          <div style="font-size:28px;font-weight:800;color:${banner.col}">${overallScore}</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Overall Score</div>
+        </div>
+      </div>
+
+      <div class="section-header"><div class="section-title">Performance Dashboard · ${agent.name}</div><div class="section-sub">Today vs 7-day rolling average</div></div>
+
+      <!-- 9 KPI Cards -->
+      <div class="kpi-grid">
+        ${kpis.map(k=>{
+          const pct=Math.min(100,Math.round((parseFloat(k.value)/k.max)*100));
+          return `<div class="kpi-card" style="--cc-kpi:${k.color};background:linear-gradient(135deg,var(--card),rgba(0,5,20,0.6))">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${k.color};box-shadow:0 0 12px ${k.color}60;border-radius:14px 14px 0 0"></div>
+            <div style="position:absolute;bottom:-10px;right:-10px;width:80px;height:80px;border-radius:50%;background:${k.color};opacity:0.04;pointer-events:none"></div>
+            <div class="kpi-icon" style="font-size:20px;margin-top:6px">${k.icon}</div>
+            <div class="kpi-label">${k.label}</div>
+            <div class="kpi-value" data-count="${parseFloat(k.value)||0}" data-suffix="${k.unit}" style="color:${k.color};text-shadow:0 0 20px ${k.color}50">${k.value}<span style="font-size:14px;font-weight:400;color:var(--muted)">${k.unit}</span></div>
+            <div class="kpi-delta ${k.delta.cls}">${k.delta.icon} ${Math.abs(k.delta.d)} vs 7d avg</div>
+            <div title="${k.tip}" style="font-size:10px;color:var(--muted);margin-top:3px;cursor:help">${k.tip.substring(0,40)}…</div>
+            <div class="kpi-bar-bg" style="background:${k.color}18"><div class="kpi-bar-fill" style="width:${pct}%;background:${k.color};box-shadow:0 0 8px ${k.color}60"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Charts row -->
+      <div class="charts-grid">
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#5b8def,#a78bfa)"><div class="chart-title">🕸️ Skills Radar</div><div class="chart-wrap"><canvas id="chart-radar"></canvas></div></div>
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#a78bfa,#ec4899)"><div class="chart-title">📞 Calls by Topic</div><div class="chart-wrap"><canvas id="chart-topic"></canvas></div></div>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#10e8a0,#5b8def)"><div class="chart-title">📈 Today vs 7-Day Average</div><div class="chart-wrap"><canvas id="chart-compare"></canvas></div></div>
+        <div class="chart-card full" style="--cc-accent:linear-gradient(90deg,#5b8def,#22d3ee,#10e8a0)"><div class="chart-title">📅 7-Day Trend</div><div class="chart-wrap tall"><canvas id="chart-trend"></canvas></div></div>
+      </div>
+
+      <!-- Notes (encouraging) -->
+      ${noteCalls.length?`
+      <div class="section-header"><div class="section-title">💡 Notes for You</div><div class="section-sub">Encouragement & tips to help you grow</div></div>
+      ${noteCalls.map(c=>`<div class="coaching-card" style="border-left:3px solid var(--green)">
+        <div class="coaching-call-ref">📞 ${c.customer_name} · ${c.business_name} · ${c.time}</div>
+        <div class="coaching-text">${c.coaching_note}</div>
+      </div>`).join('')}`:''}
+    </div>`;
+
+  setTimeout(animateCountersInView, 50);
+  setTimeout(()=>{
+    const {gridColor,tickColor,legendColor}=chartDefaults();
+    const lOpts=(yMin,yMax)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:legendColor,font:{family:'DM Sans',size:11}}}},scales:{x:{grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans',size:11}}},y:{min:yMin,max:yMax,grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans',size:11}}}}});
+    // Radar
+    STATE.charts.radar=new Chart(document.getElementById('chart-radar'),{
+      type:'radar',
+      data:{labels:['Tone','Empathy','Clarity','Resolution','Talk Balance','Churn Prev.'],
+        datasets:[
+          {label:'Today',data:[today.tone*20,today.empathy*20,today.clarity*20,resRate,avgTalkBal,churnPrev],backgroundColor:'rgba(79,142,247,0.2)',borderColor:'#4f8ef7',pointBackgroundColor:'#4f8ef7',pointRadius:4},
+          {label:'7d Avg',data:[avg.tone*20,avg.empathy*20,avg.clarity*20,resRate-5,avgTalkBal-3,churnPrev-8],backgroundColor:'rgba(167,139,250,0.1)',borderColor:'#a78bfa',pointBackgroundColor:'#a78bfa',pointRadius:3,borderDash:[4,3]}
+        ]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:gridColor},ticks:{display:false,stepSize:20},pointLabels:{color:legendColor,font:{family:'DM Sans',size:11}},suggestedMin:0,suggestedMax:100}},plugins:{legend:{labels:{color:legendColor,font:{family:'DM Sans',size:11}}}}}
+    });
+    // Topic donut
+    const tKeys=Object.keys(topicCounts);
+    STATE.charts.topic=new Chart(document.getElementById('chart-topic'),{
+      type:'doughnut',data:{labels:tKeys.map(topicLabel),datasets:[{data:tKeys.map(k=>topicCounts[k]),backgroundColor:['rgba(79,142,247,0.85)','rgba(167,139,250,0.85)','rgba(251,191,36,0.85)','rgba(52,211,153,0.85)','rgba(248,113,113,0.85)'],borderWidth:0,hoverOffset:4}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{color:legendColor,font:{family:'DM Sans',size:11},boxWidth:10}}}}
+    });
+    // Compare bar
+    STATE.charts.compare=new Chart(document.getElementById('chart-compare'),{
+      type:'bar',data:{labels:['Tone','Empathy','Clarity'],datasets:[
+        {label:'Today',data:[today.tone,today.empathy,today.clarity],backgroundColor:['rgba(79,142,247,0.8)','rgba(167,139,250,0.8)','rgba(52,211,153,0.8)'],borderRadius:7},
+        {label:'7d Avg',data:[avg.tone,avg.empathy,avg.clarity],backgroundColor:['rgba(79,142,247,0.2)','rgba(167,139,250,0.2)','rgba(52,211,153,0.2)'],borderRadius:7}
+      ]},options:lOpts(0,5)
+    });
+    // 7d trend
+    STATE.charts.trend=new Chart(document.getElementById('chart-trend'),{
+      type:'line',data:{labels:hist.map(h=>h.day),datasets:[
+        {label:'Tone',data:hist.map(h=>h.tone),borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.07)',tension:0.4,fill:true,pointBackgroundColor:'#4f8ef7',pointRadius:3},
+        {label:'Empathy',data:hist.map(h=>h.empathy),borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.07)',tension:0.4,fill:true,pointBackgroundColor:'#a78bfa',pointRadius:3},
+        {label:'Clarity',data:hist.map(h=>h.clarity),borderColor:'#34d399',backgroundColor:'rgba(52,211,153,0.07)',tension:0.4,fill:true,pointBackgroundColor:'#34d399',pointRadius:3}
+      ]},options:lOpts(2,5)
+    });
+  },50);
+}
+
+// ─── VIEW: DASHBOARD ────────────────────────────────────────────────────────
+function renderDashboard(){
+  const topics=[...new Set(getActiveCalls().map(c=>c.primary_topic))];
+  let calls=getActiveCalls();
+  if(STATE.dashTopic!=='all') calls=calls.filter(c=>c.primary_topic===STATE.dashTopic);
+  const total=calls.length;
+  const avgSent=(calls.reduce((a,b)=>a+b.overall_customer_sentiment,0)/Math.max(total,1)).toFixed(1);
+  const resolved=calls.filter(c=>c.call_outcome==='resolved').length;
+  const unresolved=calls.filter(c=>c.call_outcome==='unresolved').length;
+  const followUp=calls.filter(c=>c.call_outcome==='follow_up_required').length;
+  const resRate=total>0?Math.round((resolved/total)*100):0;
+  const escalations=calls.filter(c=>c.escalation_flag).length;
+  const highChurn=calls.filter(c=>c.churn_risk==='high').length;
+  const medChurn=calls.filter(c=>c.churn_risk==='medium').length;
+  const lowChurn=calls.filter(c=>c.churn_risk==='low').length;
+  const urgentCount=calls.filter(c=>c.priority==='urgent').length;
+  const highCount=calls.filter(c=>c.priority==='high').length;
+  const normalCount=calls.filter(c=>c.priority==='normal').length;
+  const topicMap={};calls.forEach(c=>{topicMap[c.primary_topic]=(topicMap[c.primary_topic]||0)+1;});
+  const urgentCalls=calls.filter(c=>c.priority==='urgent');
+  const avgTone=+(calls.reduce((a,b)=>a+b.agent_tone_score,0)/Math.max(calls.length,1)).toFixed(1);
+  const avgEmp=+(calls.reduce((a,b)=>a+b.agent_empathy_score,0)/Math.max(calls.length,1)).toFixed(1);
+  const totalValue=calls.reduce((a,c)=>{const m=c.amount.replace(/[^0-9]/g,'');return a+(parseInt(m)||0);},0);
+  const valStr=totalValue>=1000000?`£${(totalValue/1000000).toFixed(1)}m`:totalValue>=1000?`£${(totalValue/1000).toFixed(0)}k`:`£${totalValue}`;
+  const needsAttn=calls.filter(c=>STATE.statuses[c.call_id]!=='done'&&(c.priority==='urgent'||c.churn_risk==='high')).length;
+  // Yesterday comparison (mock deltas)
+  const yestUrgent=3,yestHigh=3,yestMed=2,yestNormal=4;
+  function deltaBadge(curr,prev){
+    const d=curr-prev;
+    if(d===0) return `<span class="arrow">→</span> ${d} vs yesterday`;
+    return `<span class="arrow" style="color:${d>0&&curr===urgentCount?'var(--red)':d>0?'var(--amber)':'var(--green)'};">${d>0?'↑':'↓'}</span> ${Math.abs(d)} vs yesterday`;
+  }
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in">
+      <div class="filters-row">
+        <span class="filter-label">Topic:</span>
+        <select class="filter-select" onchange="STATE.dashTopic=this.value;renderDashboard()">
+          <option value="all">All topics</option>
+          ${topics.map(t=>`<option value="${t}" ${STATE.dashTopic===t?'selected':''}>${topicLabel(t)}</option>`).join('')}
+        </select>
+        <span style="margin-left:auto;font-size:12px;color:var(--muted)">${total} calls today</span>
+      </div>
+
+      ${(highChurn>0||unresolved>0)?`<div class="alert-banner amber" style="margin-bottom:20px">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-content">
+          <div class="alert-title">Today's Alerts</div>
+          <ul class="alert-items">
+            ${calls.filter(c=>c.churn_risk==='high').map(c=>`<li>🔴 <span>${c.customer_name}</span> — High churn · ${topicLabel(c.primary_topic)}</li>`).join('')}
+            ${calls.filter(c=>c.call_outcome==='unresolved').map(c=>`<li>⏳ <span>${c.customer_name}</span> — Unresolved</li>`).join('')}
+            ${calls.filter(c=>c.agent_tone_score<=2).map(c=>`<li>⚠️ Coaching note: <span>${c.customer_name}</span> — tone ${c.agent_tone_score}/5</li>`).join('')}
+          </ul>
+        </div>
+      </div>`:``}
+
+      <!-- PRIORITY WIDGET CARDS (reference-inspired) -->
+      <div class="priority-widgets">
+        <div class="pw-card" style="background:linear-gradient(145deg,#0d1321,rgba(244,111,111,0.06))">
+          <div class="pw-top-bar" style="background:linear-gradient(90deg,#f46f6f,#ec4899)"></div>
+          <div class="pw-inner">
+            <div class="pw-label">🔴 Urgent</div>
+            <div class="pw-number" data-count="${urgentCount}" data-suffix="" style="color:#f46f6f;text-shadow:0 0 30px rgba(244,111,111,0.4)">${urgentCount}</div>
+            <div class="pw-delta">${deltaBadge(urgentCount,yestUrgent)}</div>
+          </div>
+        </div>
+        <div class="pw-card" style="background:linear-gradient(145deg,#0d1321,rgba(245,158,11,0.06))">
+          <div class="pw-top-bar" style="background:linear-gradient(90deg,#f59e0b,#f97316)"></div>
+          <div class="pw-inner">
+            <div class="pw-label">🟠 High Priority</div>
+            <div class="pw-number" data-count="${highCount}" data-suffix="" style="color:#f59e0b;text-shadow:0 0 30px rgba(245,158,11,0.35)">${highCount}</div>
+            <div class="pw-delta">${deltaBadge(highCount,yestHigh)}</div>
+          </div>
+        </div>
+        <div class="pw-card" style="background:linear-gradient(145deg,#0d1321,rgba(91,141,239,0.06))">
+          <div class="pw-top-bar" style="background:linear-gradient(90deg,#5b8def,#a78bfa)"></div>
+          <div class="pw-inner">
+            <div class="pw-label">🔵 Follow-Up Required</div>
+            <div class="pw-number" data-count="${followUp}" data-suffix="" style="color:#7eb3ff;text-shadow:0 0 30px rgba(91,141,239,0.4)">${followUp}</div>
+            <div class="pw-delta">${deltaBadge(followUp,yestMed)}</div>
+          </div>
+        </div>
+        <div class="pw-card" style="background:linear-gradient(145deg,#0d1321,rgba(16,232,160,0.05))">
+          <div class="pw-top-bar" style="background:linear-gradient(90deg,#10e8a0,#22d3ee)"></div>
+          <div class="pw-inner">
+            <div class="pw-label">🟢 Resolved Today</div>
+            <div class="pw-number" data-count="${resolved}" data-suffix="" style="color:#10e8a0;text-shadow:0 0 30px rgba(16,232,160,0.35)">${resolved}</div>
+            <div class="pw-delta">${deltaBadge(resolved,yestNormal)}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WIDE STAT CARDS -->
+      <div class="wide-stats">
+        <div class="wide-stat" style="border-top:3px solid #5b8def;background:linear-gradient(135deg,var(--card),rgba(91,141,239,0.04))">
+          <div class="wide-stat-val" data-count="${total}" data-suffix="" style="color:#7eb3ff;text-shadow:0 0 20px rgba(91,141,239,0.4)">${total}</div>
+          <div class="wide-stat-label">Total Calls</div>
+          <div class="wide-stat-sub">Today's batch</div>
+        </div>
+        <div class="wide-stat" style="border-top:3px solid #a78bfa;background:linear-gradient(135deg,var(--card),rgba(167,139,250,0.04))">
+          <div class="wide-stat-val" style="color:#a78bfa;text-shadow:0 0 20px rgba(167,139,250,0.35)">${valStr}</div>
+          <div class="wide-stat-label">Total Portfolio Value</div>
+          <div class="wide-stat-sub">Across today's calls</div>
+        </div>
+        <div class="wide-stat" style="border-top:3px solid ${resRate>=70?'#10e8a0':resRate>=50?'#f59e0b':'#f46f6f'};background:linear-gradient(135deg,var(--card),${resRate>=70?'rgba(16,232,160,0.04)':resRate>=50?'rgba(245,158,11,0.04)':'rgba(244,111,111,0.04)'})">
+          <div class="wide-stat-val" data-count="${resRate}" data-suffix="%" style="color:${resRate>=70?'#10e8a0':resRate>=50?'#f59e0b':'#f46f6f'};text-shadow:0 0 20px ${resRate>=70?'rgba(16,232,160,0.35)':resRate>=50?'rgba(245,158,11,0.3)':'rgba(244,111,111,0.3)'}">${resRate}%</div>
+          <div class="wide-stat-label">Resolution Rate</div>
+          <div class="wide-stat-sub">${resolved} of ${total} resolved</div>
+        </div>
+        <div class="wide-stat" style="border-top:3px solid ${needsAttn>0?'#f46f6f':'#10e8a0'};background:linear-gradient(135deg,var(--card),${needsAttn>0?'rgba(244,111,111,0.04)':'rgba(16,232,160,0.04)'})">
+          <div class="wide-stat-val" data-count="${needsAttn}" data-suffix="" style="color:${needsAttn>0?'#f46f6f':'#10e8a0'};text-shadow:0 0 20px ${needsAttn>0?'rgba(244,111,111,0.35)':'rgba(16,232,160,0.3)'}">${needsAttn}</div>
+          <div class="wide-stat-label">Needs Attention</div>
+          <div class="wide-stat-sub">Urgent + high churn open</div>
+        </div>
+      </div>
+
+      <!-- ROW 1: Sentiment by hour + Topic donut -->
+      <div class="charts-grid" style="margin-bottom:16px">
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#5b8def,#22d3ee)">
+          <div class="chart-title">📈 Avg Customer Sentiment by Hour</div>
+          <div class="chart-wrap"><canvas id="chart-hourly"></canvas></div>
+        </div>
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#a78bfa,#ec4899)">
+          <div class="chart-title">🍩 Calls by Topic</div>
+          <div class="chart-wrap"><canvas id="chart-dash-topic"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ROW 2: Outcome breakdown + Churn distribution + Agent scores -->
+      <div class="charts-grid-3" style="margin-bottom:16px">
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#10e8a0,#5b8def)">
+          <div class="chart-title">🎯 Call Outcome Breakdown</div>
+          <div class="chart-wrap"><canvas id="chart-outcome"></canvas></div>
+        </div>
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#f46f6f,#f59e0b)">
+          <div class="chart-title">🌡️ Churn Risk Distribution</div>
+          <div class="chart-wrap"><canvas id="chart-churn"></canvas></div>
+        </div>
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#f59e0b,#a78bfa)">
+          <div class="chart-title">⭐ Agent Score Snapshot</div>
+          <div class="chart-wrap"><canvas id="chart-agent-snap"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ROW 3: Talk time ratio + Weekly sentiment trend -->
+      <div class="charts-grid" style="margin-bottom:20px">
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#22d3ee,#10e8a0)">
+          <div class="chart-title">🗣️ Talk Time Ratio by Call</div>
+          <div class="chart-wrap"><canvas id="chart-talktime"></canvas></div>
+        </div>
+        <div class="chart-card" style="--cc-accent:linear-gradient(90deg,#5b8def,#10e8a0)">
+          <div class="chart-title">📅 Sentiment Trend — Last 7 Days</div>
+          <div class="chart-wrap"><canvas id="chart-weekly"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Priority calls + Performance bar -->
+      <div class="priority-list" style="margin-bottom:20px">
+        <div class="priority-header"><span class="priority-header-title">🔥 Priority Calls Needing Action</span><span style="font-size:12px;color:var(--muted);cursor:pointer" onclick="goToCall('${urgentCalls[0]?.call_id||''}')">View all →</span></div>
+        ${urgentCalls.length?urgentCalls.map(c=>`
+          <div class="priority-item" onclick="goToCall('${c.call_id}')">
+            <div class="priority-dot" style="background:var(--red)"></div>
+            <div><div class="priority-item-name">${c.customer_name} · ${c.business_name}</div><div class="priority-item-topic">${topicLabel(c.primary_topic)} · ${c.amount}</div></div>
+            <span style="font-size:16px">${sentimentEmoji(c.overall_customer_sentiment)}</span>
+            <span class="badge badge-urgent">Urgent</span>
+          </div>`).join(''):`<div class="empty-state" style="padding:20px"><div>No urgent calls 🎉</div></div>`}
+      </div>
+
+      <div class="leaderboard">
+        <div class="leaderboard-header">📊 Agent Performance — ${getCurrentAgent().name}</div>
+        <div class="leaderboard-row">
+          <span class="lb-rank top">1</span>
+          <div class="lb-avatar" style="background:rgba(79,142,247,0.15);color:var(--blue)">SM</div>
+          <div class="lb-name">Sarah M. <span style="color:var(--muted);font-weight:400;font-size:12px">· Senior Agent</span></div>
+          <div class="lb-bar-wrap">
+            <div class="lb-bar-bg"><div class="lb-bar-fill" style="width:${Math.round((avgTone/5)*100)}%"></div></div>
+            <span class="lb-score">Tone ${avgTone} · Empathy ${avgEmp}</span>
+          </div>
+          <span class="lb-badge ${avgTone>=4?'top-badge':avgTone>=3?'good-badge':'review-badge'}">${avgTone>=4?'⭐ Top':avgTone>=3?'Good':'Review'}</span>
+        </div>
+        <div style="padding:10px 18px;font-size:12px;color:var(--muted)">Additional agents appear here automatically when you upload multi-agent batches.</div>
+      </div>
+    </div>`;
+
+  setTimeout(animateCountersInView, 50);
+  setTimeout(()=>{
+    const {gridColor,tickColor,legendColor}=chartDefaults();
+    const baseOpts=(yMin,yMax,stacked=false)=>({responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:legendColor,font:{family:'DM Sans',size:11}}}},
+      scales:{x:{stacked,grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans',size:11}}},
+              y:{stacked,min:yMin,max:yMax,grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans',size:11}}}}});
+    const donutOpts=()=>({responsive:true,maintainAspectRatio:false,cutout:'65%',
+      plugins:{legend:{position:'right',labels:{color:legendColor,font:{family:'DM Sans',size:11},boxWidth:10,padding:8}}}});
+
+    // 1. Sentiment by hour
+    STATE.charts.hourly=new Chart(document.getElementById('chart-hourly'),{
+      type:'line',data:{labels:HOURLY_SENTIMENT.map(h=>h.hour),datasets:[{label:'Avg Sentiment',data:HOURLY_SENTIMENT.map(h=>h.val),borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#4f8ef7',pointRadius:4,pointHoverRadius:6}]},
+      options:baseOpts(2,5)
+    });
+
+    // 2. Calls by topic donut
+    const tKeys=Object.keys(topicMap);
+    STATE.charts.dashTopic=new Chart(document.getElementById('chart-dash-topic'),{
+      type:'doughnut',data:{labels:tKeys.map(topicLabel),datasets:[{data:tKeys.map(k=>topicMap[k]),backgroundColor:['rgba(79,142,247,0.85)','rgba(167,139,250,0.85)','rgba(251,191,36,0.85)','rgba(52,211,153,0.85)','rgba(248,113,113,0.85)','rgba(34,211,238,0.85)'],borderWidth:0,hoverOffset:6}]},
+      options:donutOpts()
+    });
+
+    // 3. Outcome breakdown (horizontal bar)
+    STATE.charts.outcome=new Chart(document.getElementById('chart-outcome'),{
+      type:'bar',data:{labels:['Resolved','Follow-up','Unresolved'],
+        datasets:[{data:[resolved,followUp,unresolved],backgroundColor:['rgba(52,211,153,0.8)','rgba(251,191,36,0.8)','rgba(248,113,113,0.8)'],borderRadius:8,borderSkipped:false}]},
+      options:{...baseOpts(0,Math.max(resolved,followUp,unresolved)+1),plugins:{legend:{display:false}}}
+    });
+
+    // 4. Churn risk donut
+    STATE.charts.churn=new Chart(document.getElementById('chart-churn'),{
+      type:'doughnut',data:{labels:['High Churn','Churn Risk','Low Risk'],datasets:[{data:[highChurn,medChurn,lowChurn],backgroundColor:['rgba(248,113,113,0.85)','rgba(251,191,36,0.85)','rgba(52,211,153,0.85)'],borderWidth:0,hoverOffset:6}]},
+      options:donutOpts()
+    });
+
+    // 5. Agent scores snapshot (radar-style bar)
+    const avgClar=+(calls.reduce((a,b)=>a+b.agent_clarity_score,0)/Math.max(calls.length,1)).toFixed(1);
+    STATE.charts.agentSnap=new Chart(document.getElementById('chart-agent-snap'),{
+      type:'bar',data:{labels:['Tone','Empathy','Clarity','Sentiment'],
+        datasets:[{label:getCurrentAgent().name,data:[avgTone,avgEmp,avgClar,parseFloat(avgSent)],
+          backgroundColor:['rgba(79,142,247,0.8)','rgba(167,139,250,0.8)','rgba(52,211,153,0.8)','rgba(251,191,36,0.8)'],borderRadius:8,borderSkipped:false}]},
+      options:{...baseOpts(0,5),plugins:{legend:{display:false}}}
+    });
+
+    // 6. Talk time ratio (stacked horizontal bar per call)
+    STATE.charts.talktime=new Chart(document.getElementById('chart-talktime'),{
+      type:'bar',
+      data:{labels:calls.map(c=>c.customer_name.split(' ')[0]),
+        datasets:[
+          {label:'Agent %',data:calls.map(c=>c.talk_time_ratio.agent_pct),backgroundColor:'rgba(79,142,247,0.75)',borderRadius:4,borderSkipped:false},
+          {label:'Customer %',data:calls.map(c=>c.talk_time_ratio.customer_pct),backgroundColor:'rgba(167,139,250,0.6)',borderRadius:4,borderSkipped:false}
+        ]},
+      options:{...baseOpts(0,100,true),indexAxis:'y',plugins:{legend:{labels:{color:legendColor,font:{family:'DM Sans',size:11}}}}}
+    });
+
+    // 7. Weekly sentiment trend
+    STATE.charts.weekly=new Chart(document.getElementById('chart-weekly'),{
+      type:'line',data:{labels:SARAH_HISTORY.map(h=>h.day),
+        datasets:[{label:'Avg Sentiment',data:SARAH_HISTORY.map(h=>h.sentiment),borderColor:'#34d399',backgroundColor:'rgba(52,211,153,0.08)',tension:0.4,fill:true,pointBackgroundColor:'#34d399',pointRadius:4}]},
+      options:baseOpts(2.5,4.5)
+    });
+  },50);
+}
+function goToCall(id){
+  STATE.allChurn='all';
+  navigate(document.querySelector('[data-view="all-calls"]'),'all-calls');
+  setTimeout(()=>{const el=document.getElementById(`card-${id}`);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlighted');}},120);
+}
+
+// ─── VIEW: ALL CALLS ────────────────────────────────────────────────────────
+function renderAllCalls(){
+  let calls=getActiveCalls();
+  if(STATE.allChurn!=='all') calls=calls.filter(c=>c.churn_risk===STATE.allChurn);
+  const q=(STATE.callSearch||'').toLowerCase().trim();
+  if(q) calls=calls.filter(c=>
+    c.customer_name.toLowerCase().includes(q)||
+    c.business_name.toLowerCase().includes(q)||
+    topicLabel(c.primary_topic).toLowerCase().includes(q)||
+    (c.call_summary||'').toLowerCase().includes(q)
+  );
+  const sorted=calls.sort((a,b)=>getPriority(a)-getPriority(b));
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in">
+      <div class="search-bar-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" placeholder="Search calls by name, company or topic…"
+          value="${STATE.callSearch||''}" oninput="STATE.callSearch=this.value;renderAllCalls()">
+        <span class="search-count">${sorted.length} call${sorted.length!==1?'s':''}</span>
+      </div>
+      <div class="filters-row" style="margin-top:-8px">
+        <span class="filter-label">Churn risk:</span>
+        <select class="filter-select" onchange="STATE.allChurn=this.value;renderAllCalls()">
+          <option value="all">All risks</option>
+          <option value="high" ${STATE.allChurn==='high'?'selected':''}>🔴 High</option>
+          <option value="medium" ${STATE.allChurn==='medium'?'selected':''}>🟡 Medium</option>
+          <option value="low" ${STATE.allChurn==='low'?'selected':''}>🟢 Low</option>
+        </select>
+      </div>
+      <div class="calls-list">${sorted.length?sorted.map((c,i)=>`<div class="stagger-item" style="animation-delay:${i*40}ms">${renderCallCard(c)}</div>`).join(''):`<div class="empty-state"><div class="empty-icon">🔍</div><div>No calls match "${q||'your filters'}"</div></div>`}</div>
+    </div>`;
+}
+
+// ─── VIEW: AGENT SCORES ─────────────────────────────────────────────────────
+function renderAgentScores(){
+  const acRaw=getActiveCalls();
+  const avg=k=>+(acRaw.reduce((s,c)=>s+c[k],0)/Math.max(acRaw.length,1)).toFixed(1);
+  const tone=avg('agent_tone_score'),emp=avg('agent_empathy_score'),cla=avg('agent_clarity_score'),sent=avg('overall_customer_sentiment');
+  const scoreColor=v=>v>=4.5?'var(--green)':v>=3?'var(--blue)':v>=2?'var(--amber)':'var(--red)';
+  const miniBar=(v,col)=>`<div class="mini-bar-bg"><div class="mini-bar-fill" style="width:${Math.round((v/5)*100)}%;background:${col}"></div></div>`;
+  // Apply sort
+  const {col:sc,dir:sd}=STATE.scoreSort;
+  const churnOrd={high:3,medium:2,low:1};
+  const ac=[...acRaw].sort((a,b)=>{
+    let av=a[sc],bv=b[sc];
+    if(sc==='churn_risk'){av=churnOrd[av]||0;bv=churnOrd[bv]||0;}
+    if(sc==='time'){av=av||'';bv=bv||'';}
+    if(sc==='customer_name'){av=(av||'').toLowerCase();bv=(bv||'').toLowerCase();}
+    if(av<bv)return -sd;if(av>bv)return sd;return 0;
+  });
+  // Sort indicator helper
+  const sortArrow=col=>sc===col?(sd===1?'<span class="sort-asc">▲</span>':'<span class="sort-desc">▼</span>'):'<span class="sort-neutral">⇅</span>';
+  const thC=(col,label)=>`<th class="sortable${sc===col?' sorted':''}" onclick="setSortCol('${col}')">${label} ${sortArrow(col)}</th>`;
+  const perCallRows=ac.map((c,i)=>`<tr class="stagger-item" style="animation-delay:${i*30}ms">
+    <td>${c.time}</td>
+    <td style="font-weight:500">${c.customer_name} <span style="color:var(--muted);font-weight:400">· ${c.business_name}</span></td>
+    <td><span class="badge badge-topic">${topicLabel(c.primary_topic)}</span></td>
+    <td><span style="color:${scoreColor(c.agent_tone_score)};font-weight:600">${c.agent_tone_score}</span>${miniBar(c.agent_tone_score,scoreColor(c.agent_tone_score))}</td>
+    <td><span style="color:${scoreColor(c.agent_empathy_score)};font-weight:600">${c.agent_empathy_score}</span>${miniBar(c.agent_empathy_score,scoreColor(c.agent_empathy_score))}</td>
+    <td><span style="color:${scoreColor(c.agent_clarity_score)};font-weight:600">${c.agent_clarity_score}</span>${miniBar(c.agent_clarity_score,scoreColor(c.agent_clarity_score))}</td>
+    <td><span style="color:${c.churn_risk==='high'?'var(--red)':c.churn_risk==='medium'?'var(--amber)':'var(--green)'}">${c.churn_risk}</span></td>
+    <td>${c.coaching_note?`<span style="color:var(--amber)">⚠️ Yes</span>`:`<span style="color:var(--muted)">—</span>`}</td>
+  </tr>`).join('');
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in">
+      <div class="section-header"><div class="section-title">Agent Scores — ${getCurrentAgent().name}</div><div class="section-sub">Today's batch · ${acRaw.length} calls</div></div>
+      <div class="score-cards" style="margin-bottom:20px">
+        ${[['🎵','Avg Tone',tone,'var(--blue)','agent_tone_score'],['💙','Avg Empathy',emp,'var(--purple)','agent_empathy_score'],['💎','Avg Clarity',cla,'var(--green)','agent_clarity_score']].map(([ico,lbl,val,col,field])=>`
+        <div class="score-card" style="border-top:3px solid ${col};background:linear-gradient(160deg,var(--card),rgba(0,5,20,0.5));cursor:pointer" onclick="setSortCol('${field}')" title="Sort by ${lbl}">
+          <div class="score-card-icon">${ico}</div>
+          <div class="score-card-label">${lbl}</div>
+          <div class="score-card-value" style="color:${col};text-shadow:0 0 24px ${col}60" data-count="${val}" data-suffix="">${val}</div>
+          <div class="score-card-delta" style="background:${val>=4?'rgba(16,232,160,0.12)':val>=3?'rgba(91,141,239,0.12)':'rgba(244,111,111,0.12)'};color:${val>=4?'#10e8a0':val>=3?'#7eb3ff':'#f46f6f'}">${val>=4?'↑ Excellent':val>=3?'= Good':'↓ Needs work'}</div>
+        </div>`).join('')}
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:auto;margin-bottom:20px">
+        <table class="scores-table">
+          <thead><tr>
+            ${thC('time','Time')}
+            ${thC('customer_name','Customer')}
+            <th>Topic</th>
+            ${thC('agent_tone_score','Tone')}
+            ${thC('agent_empathy_score','Empathy')}
+            ${thC('agent_clarity_score','Clarity')}
+            ${thC('churn_risk','Churn')}
+            <th>Notes</th>
+          </tr></thead>
+          <tbody>${perCallRows}</tbody>
+        </table>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Score Breakdown by Call</div>
+        <div class="chart-wrap tall"><canvas id="chart-agent-bar"></canvas></div>
+      </div>
+      <div style="margin-top:16px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted)">
+        💡 Add more agents by uploading additional agent call batches. The leaderboard and comparison charts will populate automatically.
+      </div>
+    </div>`;
+  setTimeout(animateCountersInView, 50);
+  setTimeout(()=>{
+    const {gridColor,tickColor,legendColor}=chartDefaults();
+    STATE.charts.agentBar=new Chart(document.getElementById('chart-agent-bar'),{
+      type:'bar',data:{
+        labels:ac.map(c=>c.customer_name.split(' ')[0]),
+        datasets:[
+          {label:'Tone',data:ac.map(c=>c.agent_tone_score),backgroundColor:'rgba(79,142,247,0.75)',borderRadius:5},
+          {label:'Empathy',data:ac.map(c=>c.agent_empathy_score),backgroundColor:'rgba(167,139,250,0.75)',borderRadius:5},
+          {label:'Clarity',data:ac.map(c=>c.agent_clarity_score),backgroundColor:'rgba(52,211,153,0.75)',borderRadius:5}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:legendColor,font:{family:'DM Sans'}}}},scales:{x:{grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans'}}},y:{min:0,max:5,grid:{color:gridColor},ticks:{color:tickColor,font:{family:'DM Sans'}}}}}
+    });
+  },50);
+}
+
+// ─── VIEW: UPLOAD ────────────────────────────────────────────────────────────
+function renderUpload(){
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in" style="max-width:680px;margin:0 auto">
+      <div class="section-header"><div class="section-title">Upload Batch</div><div class="section-sub">Drop tonight's call recordings to build tomorrow's action board</div></div>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+        <div class="upload-icon">📦</div>
+        <div class="upload-title">Drop your ZIP file here</div>
+        <div class="upload-subtitle">or click to browse your computer</div>
+        <div class="upload-formats">Accepts .zip containing .mp3 and .wav call recordings</div>
+        <input type="file" id="file-input" accept=".zip" style="display:none" onchange="startUpload(this.files[0])">
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-progress-bar-bg"><div class="upload-progress-bar-fill" id="upload-bar"></div></div>
+          <div id="upload-stage-label" style="font-size:13px;color:var(--muted);margin-bottom:16px">Preparing…</div>
+          <div class="upload-stages">
+            <div class="stage-item" id="stage-0"><span class="stage-icon">📁</span>Extracting audio files…</div>
+            <div class="stage-item" id="stage-1"><span class="stage-icon">🎙️</span>Transcribing with Whisper…</div>
+            <div class="stage-item" id="stage-2"><span class="stage-icon">🧠</span>Analysing with Claude API…</div>
+            <div class="stage-item" id="stage-3"><span class="stage-icon">🏗️</span>Building your action board…</div>
+          </div>
+        </div>
+        <div class="upload-success" id="upload-success">
+          <div class="upload-success-msg">✅ &nbsp;Batch processed! 8 calls analysed and ready.</div>
+        </div>
+      </div>
+      <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px">How it works</div>
+        ${[['📦','Upload ZIP','Drop your nightly ZIP of .mp3 or .wav call recordings'],['🎙️','Whisper Transcribes','Each call is transcribed via OpenAI Whisper with speaker diarisation'],['🧠','Claude Analyses','Claude Sonnet analyses sentiment, churn risk, topics, and coaching notes'],['📋','Action Board Built','Your personalised action board is ready before your shift starts']].map(([ico,t,d])=>`
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px">
+          <span style="font-size:20px;flex-shrink:0">${ico}</span>
+          <div><div style="font-size:13px;font-weight:600;margin-bottom:2px">${t}</div><div style="font-size:12px;color:var(--muted)">${d}</div></div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+}
+function dragOver(e){e.preventDefault();document.getElementById('upload-zone').classList.add('drag-over');}
+function dragLeave(){document.getElementById('upload-zone').classList.remove('drag-over');}
+function dropFile(e){e.preventDefault();dragLeave();if(e.dataTransfer.files[0])startUpload(e.dataTransfer.files[0]);}
+function startUpload(file){
+  if(!file)return;
+  document.getElementById('upload-progress').style.display='block';
+  document.getElementById('upload-success').style.display='none';
+  const stages=['stage-0','stage-1','stage-2','stage-3'];
+  const pcts=[15,40,75,95];const labels=['Extracting audio files…','Transcribing with Whisper…','Analysing with Claude API…','Building your action board…'];
+  let step=0;
+  const tick=()=>{
+    if(step>=stages.length){
+      document.getElementById('upload-bar').style.width='100%';
+      document.getElementById('upload-stage-label').textContent='Complete!';
+      setTimeout(()=>{document.getElementById('upload-success').style.display='block';setTimeout(()=>navigate(document.querySelector('[data-view="action-board"]'),'action-board'),1800);},600);
+      return;
+    }
+    document.getElementById('upload-bar').style.width=pcts[step]+'%';
+    document.getElementById('upload-stage-label').textContent=labels[step];
+    stages.forEach((s,i)=>{const el=document.getElementById(s);el.classList.remove('active','done','pulse');if(i<step)el.classList.add('done');else if(i===step)el.classList.add('active','pulse');});
+    step++;setTimeout(tick,step===2?1900:1300);
+  };tick();
+}
+
+// ─── VIEW: SETTINGS ─────────────────────────────────────────────────────────
+function renderSettings(){
+  const colorOpts=['#4f8ef7','#a78bfa','#34d399','#fbbf24','#f87171','#22d3ee','#fb923c','#e879f9','#4ade80','#f97316'];
+  document.getElementById('view-content').innerHTML=`
+    <div class="fade-in settings-wrap">
+      <div class="section-header"><div class="section-title">Settings</div><div class="section-sub">Manage your team and preferences</div></div>
+
+      <!-- Team Members -->
+      <div class="settings-section">
+        <div class="settings-section-header">
+          <div><div class="settings-section-title">👥 Team Members</div><div class="settings-section-sub">Each member gets their own personal dashboard</div></div>
+          <button class="btn btn-primary btn-sm" onclick="toggleAddAgentForm()">➕ Add Member</button>
+        </div>
+        <div id="agents-list">
+          ${AGENTS.map(a=>`
+          <div class="agent-manage-card" id="agent-row-${a.id}">
+            <div class="mini-avatar" style="background:${a.color};width:38px;height:38px;font-size:14px">${a.initials}</div>
+            <div class="agent-manage-info">
+              <div class="agent-manage-name">${a.name} ${a.id===STATE.currentAgent?'<span style="background:rgba(79,142,247,0.12);color:var(--blue);font-size:10px;padding:2px 7px;border-radius:5px;font-weight:600;margin-left:6px">Active</span>':''}</div>
+              <div class="agent-manage-role">${a.role}</div>
+            </div>
+            <div class="agent-manage-actions">
+              ${STATE.currentAgent!==a.id?`<button class="icon-btn" title="Switch to this agent" onclick="switchAgentFromSettings('${a.id}')">👁️</button>`:''}
+              <button class="icon-btn" title="Edit" onclick="editAgent('${a.id}')">✏️</button>
+              ${!a.isDefault?`<button class="icon-btn danger" title="Remove" onclick="removeAgent('${a.id}')">🗑️</button>`:''}
+            </div>
+          </div>`).join('')}
+        </div>
+        <div class="add-agent-form" id="add-agent-form">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px">Add New Team Member</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="new-name" placeholder="e.g. James O'Brien" /></div>
+            <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="new-role" placeholder="e.g. Senior Agent" /></div>
+          </div>
+          <div class="form-group" style="margin-bottom:12px"><label class="form-label">Accent Colour</label>
+            <div class="color-swatches" id="color-swatches">
+              ${colorOpts.map((c,i)=>`<div class="color-swatch ${i===0?'selected':''}" style="background:${c}" onclick="selectColor(this,'${c}')" data-color="${c}"></div>`).join('')}
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost btn-sm" onclick="toggleAddAgentForm()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="saveNewAgent()">➕ Add Member</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div class="settings-section">
+        <div class="settings-section-header"><div class="settings-section-title">🎨 Appearance</div></div>
+        <div class="settings-toggle-row">
+          <div><div class="settings-toggle-label">Dark Mode</div><div class="settings-toggle-sub">Toggle between dark and light interface</div></div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="theme-check" ${!document.documentElement.classList.contains('light')?'checked':''} onchange="toggleTheme()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- API Configuration -->
+      <div class="settings-section">
+        <div class="settings-section-header"><div class="settings-section-title">🔑 API Configuration</div><div class="settings-section-sub">Required for processing call batches</div></div>
+        <div style="padding:20px">
+          <div class="form-group" style="margin-bottom:14px">
+            <label class="form-label">Claude API Key</label>
+            <input class="form-input" type="password" placeholder="sk-ant-api03-..." value="sk-ant-api03-••••••••••••••••" readonly>
+          </div>
+          <div class="form-group">
+            <label class="form-label">OpenAI Whisper API Key</label>
+            <input class="form-input" type="password" placeholder="sk-proj-..." value="sk-proj-••••••••••••••••" readonly>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--muted)">🔒 API keys are stored locally and never transmitted to third parties.</div>
+        </div>
+      </div>
+
+      <!-- Data & Export -->
+      <div class="settings-section">
+        <div class="settings-section-header"><div class="settings-section-title">📁 Data & Export</div></div>
+        <div class="settings-toggle-row">
+          <div><div class="settings-toggle-label">Auto-archive resolved calls</div><div class="settings-toggle-sub">Automatically move done calls out of the active board after 24h</div></div>
+          <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-toggle-row">
+          <div><div class="settings-toggle-label">Daily report email</div><div class="settings-toggle-sub">Send end-of-day summary to team manager</div></div>
+          <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-toggle-row">
+          <div><div class="settings-toggle-label">Show encouraging notes</div><div class="settings-toggle-sub">Display motivational messages and growth tips on calls</div></div>
+          <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div style="text-align:center;padding:20px;font-size:12px;color:var(--muted)">
+        ⚡ Lightspeed Call Intelligence · v1.0<br>Powered by Claude (Anthropic) & Whisper (OpenAI)
+      </div>
+    </div>`;
+}
+
+// Agent management actions
+let selectedColor = '#4f8ef7';
+function selectColor(el,color){
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');selectedColor=color;
+}
+function toggleAddAgentForm(){
+  const f=document.getElementById('add-agent-form');
+  if(f) f.classList.toggle('open');
+}
+function saveNewAgent(){
+  const name=(document.getElementById('new-name')||{}).value||'';
+  const role=(document.getElementById('new-role')||{}).value||'Agent';
+  if(!name.trim()){alert('Please enter a name.');return;}
+  const parts=name.trim().split(' ');
+  const initials=(parts[0][0]+(parts[1]?parts[1][0]:parts[0][1]||'')).toUpperCase();
+  const id='agent-'+Date.now();
+  AGENTS.push({id,name:name.trim(),role:role||'Agent',initials,color:selectedColor,isDefault:false});
+  saveAgents();
+  document.getElementById('new-name').value='';
+  document.getElementById('new-role').value='';
+  toggleAddAgentForm();
+  renderSettings();
+  updateSidebarAgent();
+  const panel=document.getElementById('agent-dropdown-panel');
+  if(panel&&panel.classList.contains('open')) panel.innerHTML=renderAgentDropdownHTML();
+}
+function removeAgent(id){
+  if(!confirm('Remove this team member?')) return;
+  AGENTS=AGENTS.filter(a=>a.id!==id);
+  if(STATE.currentAgent===id) STATE.currentAgent=AGENTS[0].id;
+  saveAgents();renderSettings();updateSidebarAgent();
+}
+function editAgent(id){
+  const a=AGENTS.find(x=>x.id===id);if(!a)return;
+  const newName=prompt('Name:',a.name);
+  if(!newName)return;
+  const newRole=prompt('Role:',a.role)||a.role;
+  const parts=newName.trim().split(' ');
+  a.name=newName.trim();a.role=newRole;
+  a.initials=(parts[0][0]+(parts[1]?parts[1][0]:parts[0][1]||'')).toUpperCase();
+  saveAgents();renderSettings();updateSidebarAgent();
+}
+function switchAgentFromSettings(id){
+  switchAgent(id);
+  navigate(document.querySelector('[data-view="action-board"]'),'action-board');
+}
+
+// ─── RENDER ROUTER ──────────────────────────────────────────────────────────
+function renderView(){
+  const fn={'action-board':renderActionBoard,'performance':renderPerformance,'dashboard':renderDashboard,'all-calls':renderAllCalls,'agent-scores':renderAgentScores,'upload':renderUpload,'settings':renderSettings};
+  (fn[STATE.view]||renderActionBoard)();
+}
+
+// ─── CUSTOM DATE ───────────────────────────────────────────────────────────
+function setCustomDate(val){
+  if(!val) return;
+  const todayStr=TODAY.toISOString().slice(0,10);
+  const picked=new Date(val);
+  const todayDate=new Date(todayStr);
+  const diffDays=Math.round((todayDate-picked)/(1000*60*60*24));
+  // Deselect all range pills
+  document.querySelectorAll('.range-pill[data-range]').forEach(p=>p.classList.remove('active'));
+  // Map to nearest period or show custom report
+  if(diffDays===0){STATE.range='today';document.querySelector('[data-range="today"]').classList.add('active');}
+  else if(diffDays===1){STATE.range='yesterday';document.querySelector('[data-range="yesterday"]').classList.add('active');}
+  else{
+    // Build a custom period summary from PERIOD_DATA or show generic
+    STATE.range='custom';
+    STATE.customDateLabel=picked.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  }
+  destroyCharts();renderView();
+}
+
+// (period report override removed — all views now always show live demo data)
+
+// ─── TOAST SYSTEM ───────────────────────────────────────────────────────────
+function showToast(msg, type='info', duration=3200){
+  const tc=document.getElementById('toast-container');
+  const icons={success:'✅',info:'💡',warning:'⚠️',error:'❌'};
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span class="toast-icon">${icons[type]||'💬'}</span><span style="flex:1">${msg}</span>
+    <button class="toast-close" onclick="dismissToast(this.parentElement)">✕</button>`;
+  tc.appendChild(t);
+  setTimeout(()=>dismissToast(t), duration);
+}
+function dismissToast(el){
+  if(!el||el._dismissing) return;
+  el._dismissing=true;
+  el.classList.add('hiding');
+  setTimeout(()=>el.remove(), 320);
+}
+
+// ─── NOTIFICATION SYSTEM ────────────────────────────────────────────────────
+const NOTIFICATIONS=[
+  {id:1,icon:'🔴',bg:'rgba(244,111,111,0.12)',title:'High churn risk',desc:'Robert Mitchell — escalation risk, needs urgent follow-up',time:'Just now',unread:true},
+  {id:2,icon:'⚡',bg:'rgba(167,139,250,0.12)',title:'Escalated call',desc:'Daniel Okafor — escalated to management, review required',time:'12 min ago',unread:true},
+  {id:3,icon:'✅',bg:'rgba(16,232,160,0.10)',title:'Resolution rate up',desc:'Today\'s batch: 75% resolved — great work!',time:'1 hr ago',unread:false},
+  {id:4,icon:'📤',bg:'rgba(91,141,239,0.10)',title:'Batch upload complete',desc:'8 calls processed and ready for review',time:'2 hrs ago',unread:false},
+];
+let _notifOpen=false;
+
+function renderNotifPanel(){
+  const list=document.getElementById('notif-list');
+  const countEl=document.getElementById('notif-count');
+  const unread=NOTIFICATIONS.filter(n=>n.unread).length;
+  if(countEl) countEl.style.display=unread>0?'block':'none';
+  if(!list) return;
+  if(NOTIFICATIONS.length===0){
+    list.innerHTML=`<div class="notif-empty">🎉 All caught up!</div>`;return;
+  }
+  list.innerHTML=NOTIFICATIONS.map(n=>`
+    <div class="notif-item ${n.unread?'unread':''}" onclick="clickNotif(${n.id})">
+      <div class="notif-dot" style="background:${n.bg}">${n.icon}</div>
+      <div class="notif-body">
+        <div class="notif-title">${n.title}</div>
+        <div class="notif-desc">${n.desc}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+function toggleNotifPanel(){
+  _notifOpen=!_notifOpen;
+  const panel=document.getElementById('notif-panel');
+  if(panel) panel.classList.toggle('open',_notifOpen);
+}
+function markAllRead(){
+  NOTIFICATIONS.forEach(n=>n.unread=false);
+  renderNotifPanel();
+  showToast('All notifications marked as read','success',2200);
+}
+function clickNotif(id){
+  const n=NOTIFICATIONS.find(x=>x.id===id);
+  if(n){n.unread=false;renderNotifPanel();}
+  toggleNotifPanel();
+}
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('notif-panel');
+  const btn=document.getElementById('notif-btn');
+  if(_notifOpen && panel && !panel.contains(e.target) && btn && !btn.contains(e.target)){
+    _notifOpen=false;panel.classList.remove('open');
+  }
+});
+
+// ─── COMMAND PALETTE ────────────────────────────────────────────────────────
+let _cmdOpen=false;
+let _cmdIdx=0;
+
+const CMD_VIEWS=[
+  {icon:'📋',title:'My Action Board',sub:'View and action today\'s calls',view:'action-board',kbd:'G A'},
+  {icon:'📈',title:'My Performance',sub:'KPIs, scores and coaching notes',view:'performance',kbd:'G P'},
+  {icon:'🏠',title:'Dashboard',sub:'Charts, sentiment and call overview',view:'dashboard',kbd:'G D'},
+  {icon:'📞',title:'All Calls',sub:'Browse and search all calls',view:'all-calls',kbd:'G C'},
+  {icon:'🏆',title:'Agent Scores',sub:'Tone, empathy and clarity scores',view:'agent-scores',kbd:'G S'},
+  {icon:'📤',title:'Upload Batch',sub:'Upload a ZIP of audio files',view:'upload',kbd:'G U'},
+  {icon:'⚙️',title:'Settings',sub:'Agents, theme, API configuration',view:'settings',kbd:''},
+];
+
+function openCmd(){
+  _cmdOpen=true;
+  document.getElementById('cmd-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('cmd-input').focus(),50);
+  renderCmdResults();
+}
+function closeCmd(e){
+  if(!e||e.target.id==='cmd-overlay'){
+    _cmdOpen=false;
+    document.getElementById('cmd-overlay').classList.remove('open');
+    document.getElementById('cmd-input').value='';
+  }
+}
+function renderCmdResults(){
+  const q=(document.getElementById('cmd-input').value||'').toLowerCase().trim();
+  const res=document.getElementById('cmd-results');
+  const ac=getActiveCalls();
+  _cmdIdx=0;
+
+  // Views
+  const views=CMD_VIEWS.filter(v=>!q||v.title.toLowerCase().includes(q)||v.sub.toLowerCase().includes(q));
+  // Calls
+  const calls=q.length>=2?ac.filter(c=>
+    c.customer_name.toLowerCase().includes(q)||
+    c.business_name.toLowerCase().includes(q)||
+    topicLabel(c.primary_topic).toLowerCase().includes(q)
+  ).slice(0,6):[];
+
+  let html='';
+  if(views.length){
+    html+=`<div class="cmd-section-label">Navigate</div>`;
+    html+=views.map((v,i)=>`
+      <div class="cmd-item ${i===0&&!q?'selected':''}" data-idx="${i}" onclick="cmdSelectView('${v.view}')">
+        <span class="cmd-item-icon">${v.icon}</span>
+        <div class="cmd-item-main">
+          <div class="cmd-item-title">${highlight(v.title,q)}</div>
+          <div class="cmd-item-sub">${v.sub}</div>
+        </div>
+        ${v.kbd?`<span class="cmd-item-kbd">${v.kbd}</span>`:''}
+      </div>`).join('');
+  }
+  if(calls.length){
+    html+=`<div class="cmd-section-label">Calls</div>`;
+    html+=calls.map((c,i)=>{
+      const idx=views.length+i;
+      const churnColor=c.churn_risk==='high'?'#f46f6f':c.churn_risk==='medium'?'#f59e0b':'#10e8a0';
+      return `<div class="cmd-item" data-idx="${idx}" onclick="cmdSelectCall('${c.call_id}')">
+        <span class="cmd-item-icon">${c.customer_emoji||'👤'}</span>
+        <div class="cmd-item-main">
+          <div class="cmd-item-title">${highlight(c.customer_name,q)}</div>
+          <div class="cmd-item-sub">${c.business_name} · ${topicLabel(c.primary_topic)}</div>
+        </div>
+        <span class="cmd-item-badge" style="background:${churnColor}18;color:${churnColor}">${c.churn_risk} churn</span>
+      </div>`;
+    }).join('');
+  }
+  if(!html) html=`<div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">No results for "${q}"</div>`;
+  res.innerHTML=html;
+}
+function highlight(str,q){
+  if(!q) return str;
+  return str.replace(new RegExp(`(${q})`, 'gi'),'<mark style="background:rgba(91,141,239,0.25);color:var(--blue2);border-radius:2px;padding:0 1px">$1</mark>');
+}
+function cmdKeydown(e){
+  const items=document.querySelectorAll('.cmd-item');
+  if(e.key==='ArrowDown'){e.preventDefault();_cmdIdx=Math.min(_cmdIdx+1,items.length-1);updateCmdFocus(items);}
+  else if(e.key==='ArrowUp'){e.preventDefault();_cmdIdx=Math.max(_cmdIdx-1,0);updateCmdFocus(items);}
+  else if(e.key==='Enter'){e.preventDefault();if(items[_cmdIdx])items[_cmdIdx].click();}
+  else if(e.key==='Escape'){closeCmd({target:{id:'cmd-overlay'}});}
+}
+function updateCmdFocus(items){
+  items.forEach((el,i)=>el.classList.toggle('selected',i===_cmdIdx));
+  if(items[_cmdIdx]) items[_cmdIdx].scrollIntoView({block:'nearest'});
+}
+function cmdSelectView(view){
+  closeCmd({target:{id:'cmd-overlay'}});
+  navigate(document.querySelector(`[data-view="${view}"]`),view);
+}
+function cmdSelectCall(callId){
+  closeCmd({target:{id:'cmd-overlay'}});
+  navigate(document.querySelector('[data-view="action-board"]'),'action-board');
+  setTimeout(()=>{
+    const el=document.getElementById(`card-${callId}`);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlighted');}
+  },200);
+}
+
+// ─── KEYBOARD SHORTCUTS ──────────────────────────────────────────────────────
+function openShortcuts(){
+  document.getElementById('shortcuts-overlay').classList.add('open');
+}
+function closeShortcuts(e){
+  if(!e||e.target.id==='shortcuts-overlay')
+    document.getElementById('shortcuts-overlay').classList.remove('open');
+}
+let _kbdSeq='';let _kbdTimer=null;
+document.addEventListener('keydown',e=>{
+  const tag=e.target.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();_cmdOpen?closeCmd({target:{id:'cmd-overlay'}}):openCmd();return;}
+  if(e.key==='Escape'){
+    document.getElementById('shortcuts-overlay').classList.remove('open');
+    closeCmd({target:{id:'cmd-overlay'}});
+    return;
+  }
+  if(e.key==='?'){openShortcuts();return;}
+  if(e.key==='t'||e.key==='T'){toggleTheme();return;}
+  if(e.key==='r'||e.key==='R'){refreshView();showToast('View refreshed','info',1800);return;}
+  // G+x navigation
+  _kbdSeq+=e.key.toUpperCase();
+  clearTimeout(_kbdTimer);
+  _kbdTimer=setTimeout(()=>{_kbdSeq='';},600);
+  const navMap={'GA':'action-board','GP':'performance','GD':'dashboard','GC':'all-calls','GS':'agent-scores','GU':'upload'};
+  if(navMap[_kbdSeq]){
+    navigate(document.querySelector(`[data-view="${navMap[_kbdSeq]}"]`),navMap[_kbdSeq]);
+    _kbdSeq='';
+  }
+});
+
+// ─── ANIMATED COUNTERS ───────────────────────────────────────────────────────
+function animateCounter(el, end, duration=700, suffix=''){
+  if(!el) return;
+  const isFloat=String(end).includes('.');
+  const start=0;
+  const startTime=performance.now();
+  function tick(now){
+    const p=Math.min((now-startTime)/duration,1);
+    const eased=1-Math.pow(1-p,3); // ease-out cubic
+    const val=start+eased*(end-start);
+    el.textContent=(isFloat?val.toFixed(1):Math.round(val))+suffix;
+    if(p<1) requestAnimationFrame(tick);
+    else el.textContent=end+suffix;
+  }
+  requestAnimationFrame(tick);
+}
+function animateCountersInView(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const end=parseFloat(el.dataset.count);
+    const suffix=el.dataset.suffix||'';
+    animateCounter(el,end,700,suffix);
+  });
+}
+
+// ─── ALL CALLS SEARCH ────────────────────────────────────────────────────────
+STATE.callSearch='';
+function setCallSearch(val){
+  STATE.callSearch=val;
+  renderAllCalls();
+}
+
+// ─── AGENT SCORES SORT ───────────────────────────────────────────────────────
+STATE.scoreSort={col:'agent_tone_score',dir:-1};
+function setSortCol(col){
+  if(STATE.scoreSort.col===col) STATE.scoreSort.dir*=-1;
+  else{STATE.scoreSort.col=col;STATE.scoreSort.dir=-1;}
+  renderAgentScores();
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+// Set custom date picker max to today
+const picker=document.getElementById('custom-date-picker');
+if(picker) picker.max=TODAY.toISOString().slice(0,10);
+updateSidebarAgent();
+updateBackendIndicator();
+updateUrgentBadge();
+renderNotifPanel();
+renderView();
+// Probe backend then refresh if connected
+probeBackend().then(async ()=>{
+  if(backendConnected){
+    const liveCalls=await fetchCallsFromBackend(STATE.currentAgent);
+    if(liveCalls && liveCalls.length){
+      STATE.liveCalls=liveCalls;
+      STATE.statuses={};
+      liveCalls.forEach(c=>{ STATE.statuses[c.call_id]=c.status; });
+      destroyCharts(); renderView();
+    }
+  }
+});
+</script>
+</body>
+</html>
